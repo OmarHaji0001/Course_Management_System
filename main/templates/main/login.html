@@ -1,0 +1,6 @@
+<!-- main/login.html -->
+<form method="POST" action="{% url 'login' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Login</button>
+</form>

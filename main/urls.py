@@ -1,7 +1,12 @@
-from django.urls import include, path
-from . import views
+# CMS/urls.py
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
-urlpatterns = [
+from django.urls import path
+from main.views import HomeView, SignUpView, LoginView, LogoutView
 
+urlpatterns = [
+    path('', HomeView.as_view(), name='home'),
+    path('register/', SignUpView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('admin/', admin.site.urls),
 ]
