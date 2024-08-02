@@ -10,14 +10,18 @@ class HomeView(TemplateView):
 
 class SignUpView(CreateView):
     form_class = SignUpForm
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('afterLogin')
     template_name = 'main/register.html'
 
 
 class LoginView(AuthLoginView):
     template_name = 'main/login.html'
-    success_url = reverse_lazy('home')  # Update if you have a different success URL
+    success_url = reverse_lazy('dashboard')  # Update if you have a different success URL
 
 
 class LogoutView(AuthLogoutView):
-    next_page = reverse_lazy('home')
+    success_url = reverse_lazy('home')
+
+
+class DashboardView(TemplateView):
+    template_name = 'main/dashboard.html'

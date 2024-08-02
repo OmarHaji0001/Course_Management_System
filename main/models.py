@@ -12,7 +12,7 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)  # Replace 1 with the actual course ID
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)  # Replace 1 with the actual course ID
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -20,8 +20,8 @@ class Lesson(models.Model):
 
 
 class Enrollment(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)  # Replace 1 with the actual course ID
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)  # Replace 1 with the actual user ID
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)  # Replace 1 with the actual course ID
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Replace 1 with the actual user ID
     date_enrolled = models.DateField(default=date.today)  # Use default=date.today
 
     class Meta:
