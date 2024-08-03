@@ -8,7 +8,6 @@ class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional')
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional')
     email = forms.EmailField(max_length=254, help_text='Enter a valid email address')
-    role = forms.ChoiceField(choices=Profile.ROLE_CHOICES, required=True)
 
     class Meta:
         model = User
@@ -19,7 +18,6 @@ class SignUpForm(UserCreationForm):
             'email',
             'password1',
             'password2',
-            'role',
         ]
 
     def save(self, commit=True):
@@ -27,6 +25,6 @@ class SignUpForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
-            user.profile.role = self.cleaned_data['role']
+            user.profile.role = 'student'  # Set default role to student
             user.profile.save()
         return user

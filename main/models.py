@@ -32,13 +32,13 @@ class Enrollment(models.Model):
 
 
 class Profile(models.Model):
-    ROLE_CHOICES = [
+    USER_ROLES = [
         ('admin', 'Admin'),
         ('instructor', 'Instructor'),
         ('student', 'Student'),
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=10, choices=USER_ROLES, default='student')
 
     def __str__(self):
-        return self.user.username
+        return f'{self.user.username} - {self.get_role_display()}'

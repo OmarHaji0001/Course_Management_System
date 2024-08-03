@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <title>Students Dashboard</title>
+    <title>Teachers Dashboard</title>
 </head>
 <body>
 <header>
-    <h1>Students Dashboard</h1>
+    <h1>Teachers Dashboard</h1>
     <nav>
         <form id="logout-form" method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
