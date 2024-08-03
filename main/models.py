@@ -12,7 +12,7 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)  # Replace 1 with the actual course ID
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -20,12 +20,25 @@ class Lesson(models.Model):
 
 
 class Enrollment(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)  # Replace 1 with the actual course ID
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Replace 1 with the actual user ID
-    date_enrolled = models.DateField(default=date.today)  # Use default=date.today
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_enrolled = models.DateField(default=date.today)
 
     class Meta:
         unique_together = ('user', 'course')
 
     def __str__(self):
         return f'{self.user.username} enrolled in {self.course.name}'
+
+
+class Profile(models.Model):
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('instructor', 'Instructor'),
+        ('student', 'Student'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+
+    def __str__(self):
+        return self.user.username
