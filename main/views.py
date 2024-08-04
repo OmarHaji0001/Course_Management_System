@@ -17,6 +17,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('teacher-dashboard')
 
 
+
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseUpdateView(LoginRequiredMixin, UpdateView):
     model = Course
