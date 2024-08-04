@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/TD.css' %}">
     <title>Teachers Dashboard</title>
 </head>
 <body>
@@ -17,5 +17,43 @@
         </form>
     </nav>
 </header>
+<main>
+    <h2>Course Management</h2>
+    <!-- Create Course Form -->
+    <form method="POST" action="{% url 'course-create' %}">
+        {% csrf_token %}
+        <div>
+            <label for="id_name">Course Name:</label>
+            {{ course_form.name }}
+        </div>
+        <div>
+            <label for="id_description">Course Description:</label>
+            {{ course_form.description }}
+        </div>
+        <button type="submit">Create Course</button>
+    </form>
+
+    <!-- List of Courses -->
+    <h3>Courses</h3>
+    <ul>
+        {% for course in courses %}
+        <li>
+            {{ course.name }}
+            <a href="{% url 'course-edit' course.pk %}">Edit</a>
+            <a href="{% url 'course-delete' course.pk %}">Delete</a>
+            <!-- Add Lesson Form -->
+            <form method="POST" action="{% url 'lesson-create' course.pk %}">
+                {% csrf_token %}
+                <div>
+                    <label for="lesson_name_{{ course.id }}">Lesson Name:</label>
+                    <input type="text" name="name" id="lesson_name_{{ course.id }}" placeholder="Lesson Name">
+                </div>
+                <input type="hidden" name="course" value="{{ course.id }}">
+                <button type="submit">Add Lesson</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</main>
 </body>
 </html>
