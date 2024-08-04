@@ -22,7 +22,7 @@ class LoginView(AuthLoginView):
     def get_success_url(self):
         if self.request.user.profile.role == 'admin':
             return reverse_lazy('admin-dashboard')
-        elif self.request.user.profile.role == 'teacher':
+        elif self.request.user.profile.role == 'instructor':
             return reverse_lazy('teacher-dashboard')
         else:
             return reverse_lazy('dashboard')
@@ -46,7 +46,7 @@ def admin_dashboard(request):
 
 
 def is_teacher(user):
-    return user.is_authenticated and user.profile.role == 'teacher'
+    return user.is_authenticated and user.profile.role == 'instructor'
 
 
 @user_passes_test(is_teacher)
