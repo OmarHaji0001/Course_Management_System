@@ -22,6 +22,30 @@ class CourseUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'main/edit_course.html'
     success_url = reverse_lazy('teacher-dashboard')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['lesson_form'] = LessonForm()
+        context['lessons'] = self.object.lesson_set.all()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if 'save_course' in request.POST:
+            form = self.get_form()
+            if form.is_valid():
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+        elif 'save_lesson' in request.POST:
+            lesson_id = request.POST.get('lesson_id')
+            lesson = get_object_or_404(Lesson, id=lesson_id)
+            lesson_form = LessonForm(request.POST, instance=lesson)
+            if lesson_form.is_valid():
+                lesson_form.save()
+                return redirect('course-edit', pk=self.object.pk)
+            else:
+                return self.form_invalid(lesson_form)
+
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseDeleteView(LoginRequiredMixin, DeleteView):
     model = Course
@@ -37,7 +61,6 @@ class LessonCreateView(LoginRequiredMixin, CreateView):
 
 def teacher_dashboard(request):
     courses = Course.objects.all()
-    lessons = Lesson.objects.all()
     if request.method == 'POST':
         course_form = CourseForm(request.POST)
         if course_form.is_valid():
@@ -47,7 +70,6 @@ def teacher_dashboard(request):
         course_form = CourseForm()
     return render(request, 'main/teachers_dashboard.html', {
         'courses': courses,
-        'lessons': lessons,
         'course_form': course_form
     })
 

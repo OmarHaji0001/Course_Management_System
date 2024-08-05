@@ -16,8 +16,25 @@
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="submit" class="btn btn-primary" name="save_course">Save Changes</button>
     </form>
+
+    <h3>Lessons</h3>
+    <ul>
+        {% for lesson in lessons %}
+        <li>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
+                <div>
+                    <label for="lesson_name_{{ lesson.id }}">Lesson Name:</label>
+                    <input type="text" name="name" id="lesson_name_{{ lesson.id }}" value="{{ lesson.name }}">
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm" name="save_lesson">Save Lesson</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
 </main>
 </body>
 </html>
