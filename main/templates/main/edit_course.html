@@ -11,6 +11,12 @@
 <body>
 <header>
     <h1>Edit Course</h1>
+        <nav>
+        <form id="logout-form" method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
 </header>
 <main>
     <form method="POST">
