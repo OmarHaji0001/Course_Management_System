@@ -8,12 +8,14 @@ from django.utils.decorators import method_decorator
 from .forms import SignUpForm, CourseForm, LessonForm
 from .models import Course, Lesson
 
+
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseCreateView(LoginRequiredMixin, CreateView):
     model = Course
     form_class = CourseForm
     template_name = 'main/teachers_dashboard.html'
     success_url = reverse_lazy('teacher-dashboard')
+
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseUpdateView(LoginRequiredMixin, UpdateView):
@@ -46,11 +48,13 @@ class CourseUpdateView(LoginRequiredMixin, UpdateView):
             else:
                 return self.form_invalid(lesson_form)
 
+
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseDeleteView(LoginRequiredMixin, DeleteView):
     model = Course
     template_name = 'main/teachers_dashboard.html'
     success_url = reverse_lazy('teacher-dashboard')
+
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class LessonCreateView(LoginRequiredMixin, CreateView):
@@ -58,6 +62,7 @@ class LessonCreateView(LoginRequiredMixin, CreateView):
     form_class = LessonForm
     template_name = 'main/teachers_dashboard.html'
     success_url = reverse_lazy('teacher-dashboard')
+
 
 def teacher_dashboard(request):
     courses = Course.objects.all()
@@ -73,6 +78,7 @@ def teacher_dashboard(request):
         'course_form': course_form
     })
 
+
 @user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor')
 def delete_course(request, pk):
     course = get_object_or_404(Course, pk=pk)
@@ -81,13 +87,16 @@ def delete_course(request, pk):
         return redirect('teacher-dashboard')
     return render(request, 'main/teachers_dashboard.html', {'course': course})
 
+
 class HomeView(TemplateView):
     template_name = 'main/home.html'
+
 
 class SignUpView(CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy('login')
     template_name = 'main/register.html'
+
 
 class LoginView(AuthLoginView):
     template_name = 'main/login.html'
@@ -100,14 +109,18 @@ class LoginView(AuthLoginView):
         else:
             return reverse_lazy('dashboard')
 
+
 class LogoutView(AuthLogoutView):
     next_page = reverse_lazy('home')
+
 
 class DashboardView(TemplateView):
     template_name = 'main/dashboard.html'
 
+
 def is_admin(user):
     return user.is_authenticated and user.profile.role == 'admin'
+
 
 @user_passes_test(is_admin)
 def admin_dashboard(request):
