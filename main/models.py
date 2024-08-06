@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import date, time
 
+
 class Course(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -10,6 +11,7 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -21,6 +23,7 @@ class Lesson(models.Model):
     def __str__(self):
         return self.name
 
+
 class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -31,6 +34,24 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f'{self.user.username} enrolled in {self.course.name}'
+
+
+class Feedback(models.Model):
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField()
+
+    def __str__(self):
+        return f'{self.student.username} feedback on {self.lesson.name}'
+
+
+class Completion(models.Model):
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.student.username} completed {self.lesson.name}'
+
 
 class Profile(models.Model):
     USER_ROLES = [

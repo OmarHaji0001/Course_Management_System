@@ -65,6 +65,7 @@
             <p>Open for Registration: {{ course.open_for_registration }}</p>
             <a href="{% url 'course-edit' course.pk %}" class="btn btn-primary btn-sm">Edit</a>
             <a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="confirmDelete({{ course.pk }}, '{{ course.name }}');">Delete</a>
+            <a href="{% url 'teacher-course-students' course.id %}" class="btn btn-info btn-sm">View Students</a>
             <!-- Add Lesson Form -->
             <form method="POST" action="{% url 'lesson-create' course.pk %}">
                 {% csrf_token %}

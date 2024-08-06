@@ -28,12 +28,9 @@
     <h3>Lessons</h3>
     <ul>
         {% for lesson in lessons %}
-        <li>
-            <h4>{{ lesson.name }}</h4>
-            <p>{{ lesson.description }}</p>
-        </li>
-        {% empty %}
-        <li>No lessons available at this time.</li>
+            <li>
+                <a href="{% url 'lesson-detail' lesson.id %}">{{ lesson.name }}</a>
+            </li>
         {% endfor %}
     </ul>
 </main>

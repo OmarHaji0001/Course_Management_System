@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Course, Lesson
+from .models import Course, Lesson, Feedback
 
 
 class CourseForm(forms.ModelForm):
@@ -14,6 +14,12 @@ class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
         fields = ['name', 'description', 'course', 'open_date', 'open_time']
+
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['comment']
 
 
 class SignUpForm(UserCreationForm):

@@ -1,16 +1,16 @@
-from datetime import datetime
-
+# views.py
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
-from .forms import SignUpForm, CourseForm, LessonForm
-from .models import Course, Lesson, Enrollment
+from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm
+from .models import Course, Lesson, Enrollment, Feedback, Completion
 from django.contrib import messages
-from django.utils import timezone
+from datetime import datetime
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
@@ -84,6 +84,56 @@ class LessonCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('teacher-dashboard')
 
 
+class LessonDetailView(LoginRequiredMixin, DetailView):
+    model = Lesson
+    template_name = 'main/lesson_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['feedback_form'] = FeedbackForm()
+        context['completion'] = Completion.objects.filter(student=self.request.user, lesson=self.object).exists()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if 'submit_feedback' in request.POST:
+            feedback_form = FeedbackForm(request.POST)
+            if feedback_form.is_valid():
+                feedback = feedback_form.save(commit=False)
+                feedback.lesson = self.object
+                feedback.student = request.user
+                feedback.save()
+                messages.success(request, 'Feedback submitted successfully.')
+                return redirect('lesson-detail', pk=self.object.pk)
+        elif 'mark_complete' in request.POST:
+            Completion.objects.get_or_create(student=request.user, lesson=self.object)
+            messages.success(request, 'Lesson marked as complete.')
+            return redirect('lesson-detail', pk=self.object.pk)
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+
+@login_required
+def teacher_course_students(request, course_id):
+    course = get_object_or_404(Course, pk=course_id)
+    enrollments = Enrollment.objects.filter(course=course)
+    return render(request, 'main/teacher_course_students.html', {'course': course, 'enrollments': enrollments})
+
+
+@login_required
+def teacher_student_progress(request, course_id, student_id):
+    course = get_object_or_404(Course, pk=course_id)
+    student = get_object_or_404(User, pk=student_id)
+    completions = Completion.objects.filter(student=student, lesson__course=course)
+    feedbacks = Feedback.objects.filter(student=student, lesson__course=course)
+    return render(request, 'main/teacher_student_progress.html', {
+        'course': course,
+        'student': student,
+        'completions': completions,
+        'feedbacks': feedbacks
+    })
+
+
 def teacher_dashboard(request):
     courses = Course.objects.all()
     if request.method == 'POST':
@@ -140,6 +190,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['courses'] = Course.objects.all()
+        context['today'] = datetime.now().date()
+        context['now'] = datetime.now().time()
         return context
 
 
@@ -152,6 +204,28 @@ def enroll_in_course(request, course_id):
     else:
         messages.info(request, f'You are already enrolled in {course.name}.')
     return redirect('dashboard')
+
+
+@login_required
+def submit_feedback(request, lesson_id):
+    lesson = get_object_or_404(Lesson, id=lesson_id)
+    if request.method == 'POST':
+        feedback_form = FeedbackForm(request.POST)
+        if feedback_form.is_valid():
+            feedback = feedback_form.save(commit=False)
+            feedback.lesson = lesson
+            feedback.student = request.user
+            feedback.save()
+            messages.success(request, 'Feedback submitted successfully.')
+    return redirect('lesson-detail', pk=lesson_id)
+
+
+@login_required
+def mark_lesson_complete(request, lesson_id):
+    lesson = get_object_or_404(Lesson, id=lesson_id)
+    Completion.objects.get_or_create(student=request.user, lesson=lesson)
+    messages.success(request, 'Lesson marked as complete.')
+    return redirect('lesson-detail', pk=lesson_id)
 
 
 def is_admin(user):
