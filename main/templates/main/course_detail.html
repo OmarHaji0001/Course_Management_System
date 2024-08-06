@@ -32,6 +32,8 @@
             <h4>{{ lesson.name }}</h4>
             <p>{{ lesson.description }}</p>
         </li>
+        {% empty %}
+        <li>No lessons available at this time.</li>
         {% endfor %}
     </ul>
 </main>

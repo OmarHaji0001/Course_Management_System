@@ -13,7 +13,7 @@ class CourseForm(forms.ModelForm):
 class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
-        fields = ['name', 'description', 'course']
+        fields = ['name', 'description', 'course', 'open_date', 'open_time']
 
 
 class SignUpForm(UserCreationForm):

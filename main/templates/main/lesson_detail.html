@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <title>{{ lesson.name }} - Details</title>
+</head>
+<body>
+<header>
+    <h1>{{ lesson.name }} - Details</h1>
+    <nav>
+        <form id="logout-form" method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main>
+    <h2>Lesson Information</h2>
+    <p>{{ lesson.description }}</p>
+    <p>Open Date: {{ lesson.open_date }}</p>
+    <p>Open Time: {{ lesson.open_time }}</p>
+</main>
+</body>
+</html>

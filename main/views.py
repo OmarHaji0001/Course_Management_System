@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
@@ -8,6 +10,7 @@ from django.utils.decorators import method_decorator
 from .forms import SignUpForm, CourseForm, LessonForm
 from .models import Course, Lesson, Enrollment
 from django.contrib import messages
+from django.utils import timezone
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
@@ -28,8 +31,9 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course = get_object_or_404(Course, pk=self.kwargs['pk'])
+        now = datetime.now()
         context['course'] = course
-        context['lessons'] = course.lesson_set.all()
+        context['lessons'] = course.lesson_set.filter(open_date__lte=now.date(), open_time__lte=now.time())
         return context
 
 

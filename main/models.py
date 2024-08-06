@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import date
-
+from datetime import date, time
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
@@ -12,15 +11,15 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
-
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
+    open_date = models.DateField(default=date.today)
+    open_time = models.TimeField(default=time(0, 0))
 
     def __str__(self):
         return self.name
-
 
 class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -32,7 +31,6 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f'{self.user.username} enrolled in {self.course.name}'
-
 
 class Profile(models.Model):
     USER_ROLES = [

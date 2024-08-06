@@ -12,8 +12,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function confirmDelete(courseId, courseName) {
-            $('#deleteModal #courseName').text(courseName);
-            $('#deleteModal form').attr('action', `/courses/${courseId}/delete/`);
+            document.querySelector('#deleteModal #courseName').textContent = courseName;
+            document.querySelector('#deleteModal form').setAttribute('action', `/courses/${courseId}/delete/`);
             $('#deleteModal').modal('show');
         }
     </script>
@@ -75,6 +75,14 @@
                 <div>
                     <label for="lesson_description_{{ course.id }}">Lesson Description:</label>
                     <textarea name="description" id="lesson_description_{{ course.id }}" placeholder="Lesson Description"></textarea>
+                </div>
+                <div>
+                    <label for="lesson_open_date_{{ course.id }}">Open Date:</label>
+                    <input type="date" name="open_date" id="lesson_open_date_{{ course.id }}">
+                </div>
+                <div>
+                    <label for="lesson_open_time_{{ course.id }}">Open Time:</label>
+                    <input type="time" name="open_time" id="lesson_open_time_{{ course.id }}">
                 </div>
                 <input type="hidden" name="course" value="{{ course.id }}">
                 <button type="submit" class="btn btn-secondary btn-sm">Add Lesson</button>
