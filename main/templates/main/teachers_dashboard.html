@@ -31,7 +31,7 @@
 <main>
     <h2>Course Management</h2>
     <!-- Create Course Form -->
-    <form method="POST" action="{% url 'course-create' %}">
+    <form method="POST" action="{% url 'course-create' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div>
             <label for="id_name">Course Name:</label>
@@ -40,6 +40,14 @@
         <div>
             <label for="id_description">Course Description:</label>
             {{ course_form.description }}
+        </div>
+        <div>
+            <label for="id_cover_image">Cover Image:</label>
+            {{ course_form.cover_image }}
+        </div>
+        <div>
+            <label for="id_open_for_registration">Open for Registration:</label>
+            {{ course_form.open_for_registration }}
         </div>
         <button type="submit" class="btn btn-success">Create Course</button>
     </form>
@@ -50,6 +58,11 @@
         {% for course in courses %}
         <li>
             <h4>{{ course.name }}</h4>
+            {% if course.cover_image %}
+            <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}" style="max-width: 200px;">
+            {% endif %}
+            <p>{{ course.description }}</p>
+            <p>Open for Registration: {{ course.open_for_registration }}</p>
             <a href="{% url 'course-edit' course.pk %}" class="btn btn-primary btn-sm">Edit</a>
             <a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="confirmDelete({{ course.pk }}, '{{ course.name }}');">Delete</a>
             <!-- Add Lesson Form -->
@@ -59,6 +72,10 @@
                     <label for="lesson_name_{{ course.id }}">Lesson Name:</label>
                     <input type="text" name="name" id="lesson_name_{{ course.id }}" placeholder="Lesson Name">
                 </div>
+                <div>
+                    <label for="lesson_description_{{ course.id }}">Lesson Description:</label>
+                    <textarea name="description" id="lesson_description_{{ course.id }}" placeholder="Lesson Description"></textarea>
+                </div>
                 <input type="hidden" name="course" value="{{ course.id }}">
                 <button type="submit" class="btn btn-secondary btn-sm">Add Lesson</button>
             </form>
@@ -66,7 +83,9 @@
             <h5>Lessons</h5>
             <ul>
                 {% for lesson in course.lesson_set.all %}
-                <li>{{ lesson.name }}</li>
+                <li>
+                    <strong>{{ lesson.name }}</strong>: {{ lesson.description }}
+                </li>
                 {% endfor %}
             </ul>
         </li>

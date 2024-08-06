@@ -3,10 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
 from .forms import SignUpForm, CourseForm, LessonForm
-from .models import Course, Lesson
+from .models import Course, Lesson, Enrollment
+from django.contrib import messages
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
@@ -15,6 +16,21 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
     form_class = CourseForm
     template_name = 'main/teachers_dashboard.html'
     success_url = reverse_lazy('teacher-dashboard')
+
+    def form_valid(self, form):
+        form.instance.cover_image = self.request.FILES.get('cover_image')
+        return super().form_valid(form)
+
+
+class CourseDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'main/course_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course = get_object_or_404(Course, pk=self.kwargs['pk'])
+        context['course'] = course
+        context['lessons'] = course.lesson_set.all()
+        return context
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
@@ -67,7 +83,7 @@ class LessonCreateView(LoginRequiredMixin, CreateView):
 def teacher_dashboard(request):
     courses = Course.objects.all()
     if request.method == 'POST':
-        course_form = CourseForm(request.POST)
+        course_form = CourseForm(request.POST, request.FILES)
         if course_form.is_valid():
             course_form.save()
             return redirect('teacher-dashboard')
@@ -85,7 +101,7 @@ def delete_course(request, pk):
     if request.method == 'POST':
         course.delete()
         return redirect('teacher-dashboard')
-    return render(request, 'main/teachers_dashboard.html', {'course': course})
+    return render(request, 'main/teachers_dashboard.html')
 
 
 class HomeView(TemplateView):
@@ -114,8 +130,24 @@ class LogoutView(AuthLogoutView):
     next_page = reverse_lazy('home')
 
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'main/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['courses'] = Course.objects.all()
+        return context
+
+
+@login_required
+def enroll_in_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    enrollment, created = Enrollment.objects.get_or_create(course=course, user=request.user)
+    if created:
+        messages.success(request, f'You have successfully enrolled in {course.name}.')
+    else:
+        messages.info(request, f'You are already enrolled in {course.name}.')
+    return redirect('dashboard')
 
 
 def is_admin(user):

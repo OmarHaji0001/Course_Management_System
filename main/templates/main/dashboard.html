@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <title>Students Dashboard</title>
 </head>
 <body>
@@ -17,5 +17,35 @@
         </form>
     </nav>
 </header>
+<main>
+    {% if messages %}
+        <div>
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <h2>Courses</h2>
+    <ul class="course-list">
+        {% for course in courses %}
+        <li class="{% if not course.open_for_registration %}gray{% endif %}">
+            <h4><a href="{% url 'course-detail' course.id %}">{{ course.name }}</a></h4>
+            {% if course.cover_image %}
+            <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}">
+            {% endif %}
+            <p>{{ course.description }}</p>
+            <p>Open for Registration: {{ course.open_for_registration }}</p>
+            {% if course.open_for_registration %}
+            <form method="POST" action="{% url 'enroll-in-course' course.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Enroll</button>
+            </form>
+            {% else %}
+            <button class="btn btn-secondary" disabled>Enrollment Closed</button>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</main>
 </body>
 </html>

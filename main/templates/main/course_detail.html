@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <title>{{ course.name }} - Details</title>
+</head>
+<body>
+<header>
+    <h1>{{ course.name }} - Details</h1>
+    <nav>
+        <form id="logout-form" method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+<main>
+    <h2>Course Information</h2>
+    <p>{{ course.description }}</p>
+    <p>Open for Registration: {{ course.open_for_registration }}</p>
+    {% if course.cover_image %}
+    <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}" style="max-width: 300px;">
+    {% endif %}
+    <h3>Lessons</h3>
+    <ul>
+        {% for lesson in lessons %}
+        <li>
+            <h4>{{ lesson.name }}</h4>
+            <p>{{ lesson.description }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</main>
+</body>
+</html>

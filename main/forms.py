@@ -7,13 +7,13 @@ from .models import Course, Lesson
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'cover_image', 'open_for_registration']
 
 
 class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
-        fields = ['name', 'course']
+        fields = ['name', 'description', 'course']
 
 
 class SignUpForm(UserCreationForm):

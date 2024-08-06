@@ -6,6 +6,8 @@ from datetime import date
 class Course(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    cover_image = models.ImageField(upload_to='course_images/', null=True, blank=True)
+    open_for_registration = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -14,6 +16,7 @@ class Course(models.Model):
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name

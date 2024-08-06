@@ -19,7 +19,7 @@
     </nav>
 </header>
 <main>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary" name="save_course">Save Changes</button>
@@ -35,6 +35,10 @@
                 <div>
                     <label for="lesson_name_{{ lesson.id }}">Lesson Name:</label>
                     <input type="text" name="name" id="lesson_name_{{ lesson.id }}" value="{{ lesson.name }}">
+                </div>
+                <div>
+                    <label for="lesson_description_{{ lesson.id }}">Lesson Description:</label>
+                    <textarea name="description" id="lesson_description_{{ lesson.id }}">{{ lesson.description }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm" name="save_lesson">Save Lesson</button>
             </form>
