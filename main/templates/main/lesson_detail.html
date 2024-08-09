@@ -23,13 +23,6 @@
     <p><strong>Open time:</strong> {{ lesson.open_time }}</p>
     <p>{{ lesson.description }}</p>
 
-    <h3>Feedback</h3>
-    <form method="POST" action="{% url 'lesson-detail' lesson.id %}">
-        {% csrf_token %}
-        {{ feedback_form.as_p }}
-        <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
-    </form>
-
     <h3>Completion</h3>
     <form method="POST" action="{% url 'lesson-detail' lesson.id %}">
         {% csrf_token %}

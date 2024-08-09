@@ -36,15 +36,6 @@ class Enrollment(models.Model):
         return f'{self.user.username} enrolled in {self.course.name}'
 
 
-class Feedback(models.Model):
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    student = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.TextField()
-
-    def __str__(self):
-        return f'{self.student.username} feedback on {self.lesson.name}'
-
-
 class Completion(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     student = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -7,8 +7,8 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
-from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm
-from .models import Course, Lesson, Enrollment, Feedback, Completion
+from .forms import SignUpForm, CourseForm, LessonForm
+from .models import Course, Lesson, Enrollment, Completion
 from django.contrib import messages
 from datetime import datetime
 
@@ -90,22 +90,12 @@ class LessonDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['feedback_form'] = FeedbackForm()
         context['completion'] = Completion.objects.filter(student=self.request.user, lesson=self.object).exists()
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if 'submit_feedback' in request.POST:
-            feedback_form = FeedbackForm(request.POST)
-            if feedback_form.is_valid():
-                feedback = feedback_form.save(commit=False)
-                feedback.lesson = self.object
-                feedback.student = request.user
-                feedback.save()
-                messages.success(request, 'Feedback submitted successfully.')
-                return redirect('lesson-detail', pk=self.object.pk)
-        elif 'mark_complete' in request.POST:
+        if 'mark_complete' in request.POST:
             Completion.objects.get_or_create(student=request.user, lesson=self.object)
             messages.success(request, 'Lesson marked as complete.')
             return redirect('lesson-detail', pk=self.object.pk)
@@ -125,12 +115,10 @@ def teacher_student_progress(request, course_id, student_id):
     course = get_object_or_404(Course, pk=course_id)
     student = get_object_or_404(User, pk=student_id)
     completions = Completion.objects.filter(student=student, lesson__course=course)
-    feedbacks = Feedback.objects.filter(student=student, lesson__course=course)
     return render(request, 'main/teacher_student_progress.html', {
         'course': course,
         'student': student,
         'completions': completions,
-        'feedbacks': feedbacks
     })
 
 
@@ -204,20 +192,6 @@ def enroll_in_course(request, course_id):
     else:
         messages.info(request, f'You are already enrolled in {course.name}.')
     return redirect('dashboard')
-
-
-@login_required
-def submit_feedback(request, lesson_id):
-    lesson = get_object_or_404(Lesson, id=lesson_id)
-    if request.method == 'POST':
-        feedback_form = FeedbackForm(request.POST)
-        if feedback_form.is_valid():
-            feedback = feedback_form.save(commit=False)
-            feedback.lesson = lesson
-            feedback.student = request.user
-            feedback.save()
-            messages.success(request, 'Feedback submitted successfully.')
-    return redirect('lesson-detail', pk=lesson_id)
 
 
 @login_required
