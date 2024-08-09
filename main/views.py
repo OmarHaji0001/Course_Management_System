@@ -2,6 +2,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseNotAllowed
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
@@ -100,41 +101,28 @@ class LessonDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['feedback_form'] = FeedbackForm()
+        course = self.object.course
+        last_lesson = course.lesson_set.order_by('-open_date', '-open_time').first()
+        context['is_last_lesson'] = self.object == last_lesson
+        context['feedback_form'] = FeedbackForm() if context['is_last_lesson'] else None
         context['completion'] = Completion.objects.filter(student=self.request.user, lesson=self.object).exists()
+        context['course_id'] = course.id  # Pass the course_id to the context
         return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if 'submit_feedback' in request.POST:
-            feedback_form = FeedbackForm(request.POST)
-            if feedback_form.is_valid():
-                feedback = feedback_form.save(commit=False)
-                feedback.lesson = self.object
-                feedback.student = request.user
-                feedback.save()
-                messages.success(request, 'Feedback submitted successfully.')
-                return redirect('lesson-detail', pk=self.object.pk)
-        elif 'mark_complete' in request.POST:
-            Completion.objects.get_or_create(student=request.user, lesson=self.object)
-            messages.success(request, 'Lesson marked as complete.')
-            return redirect('lesson-detail', pk=self.object.pk)
-        context = self.get_context_data()
-        return self.render_to_response(context)
 
 
 @login_required
-def submit_feedback(request, lesson_id):
-    lesson = get_object_or_404(Lesson, id=lesson_id)
+def submit_feedback(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
     if request.method == 'POST':
         feedback_form = FeedbackForm(request.POST)
         if feedback_form.is_valid():
             feedback = feedback_form.save(commit=False)
-            feedback.lesson = lesson
+            feedback.course = course
             feedback.student = request.user
             feedback.save()
             messages.success(request, 'Feedback submitted successfully.')
-    return redirect('lesson-detail', pk=lesson_id)
+    return redirect('course-detail', pk=course.id)
+
 
 
 @login_required
@@ -149,14 +137,13 @@ def teacher_student_progress(request, course_id, student_id):
     course = get_object_or_404(Course, pk=course_id)
     student = get_object_or_404(User, pk=student_id)
     completions = Completion.objects.filter(student=student, lesson__course=course)
-    feedbacks = Feedback.objects.filter(student=student, lesson__course=course)
+    feedbacks = Feedback.objects.filter(student=student, course=course)
     return render(request, 'main/teacher_student_progress.html', {
         'course': course,
         'student': student,
         'completions': completions,
-        'feedbacks': feedbacks,  # Ensure feedbacks are passed to the template
+        'feedbacks': feedbacks,
     })
-
 
 
 def teacher_dashboard(request):
@@ -233,10 +220,13 @@ def enroll_in_course(request, course_id):
 
 @login_required
 def mark_lesson_complete(request, lesson_id):
-    lesson = get_object_or_404(Lesson, id=lesson_id)
-    Completion.objects.get_or_create(student=request.user, lesson=lesson)
-    messages.success(request, 'Lesson marked as complete.')
-    return redirect('lesson-detail', pk=lesson_id)
+    if request.method == 'POST':
+        lesson = get_object_or_404(Lesson, id=lesson_id)
+        Completion.objects.get_or_create(student=request.user, lesson=lesson)
+        messages.success(request, 'Lesson marked as complete.')
+        return redirect('lesson-detail', pk=lesson_id)
+    else:
+        return HttpResponseNotAllowed(['POST'])
 
 
 def is_admin(user):

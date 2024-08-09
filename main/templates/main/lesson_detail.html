@@ -22,16 +22,21 @@
     <p><strong>Open date:</strong> {{ lesson.open_date }}</p>
     <p><strong>Open time:</strong> {{ lesson.open_time }}</p>
     <p>{{ lesson.description }}</p>
-    <h3>Feedback</h3>
-    <form method="POST" action="{% url 'lesson-feedback' lesson.id %}">
-        {% csrf_token %}
-        {{ feedback_form.as_p }}
-        <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
-    </form>
+
+    {% if is_last_lesson %}
+        <h3>Course Feedback</h3>
+        <form method="POST" action="{% url 'submit-feedback' course_id %}">
+            {% csrf_token %}
+            {{ feedback_form.as_p }}
+            <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
+        </form>
+    {% endif %}
+
+
     <h3>Completion</h3>
-    <form method="POST" action="{% url 'lesson-detail' lesson.id %}">
+    <form method="POST" action="{% url 'mark-lesson-complete' lesson.id %}">
         {% csrf_token %}
-        <button type="submit" name="mark_complete" class="btn btn-success" {% if completion %}disabled{% endif %}>
+        <button type="submit" class="btn btn-success" {% if completion %}disabled{% endif %}>
             {% if completion %}Completed{% else %}Mark as Complete{% endif %}
         </button>
     </form>
