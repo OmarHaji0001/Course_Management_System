@@ -25,7 +25,14 @@
         <li>{{ completion.lesson.name }}</li>
         {% endfor %}
     </ul>
-
+     <h3>Feedbacks</h3>
+        <ul>
+            {% for feedback in feedbacks %}
+            <li>
+                <strong>{{ feedback.lesson.name }}:</strong> {{ feedback.comment }}
+            </li>
+            {% endfor %}
+        </ul>
 </main>
 </body>
 </html>

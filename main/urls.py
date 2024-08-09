@@ -1,9 +1,8 @@
-# urls.py
 from django.urls import path
 from .views import HomeView, SignUpView, LoginView, LogoutView, DashboardView
 from .views import admin_dashboard, teacher_dashboard, CourseDetailView, enroll_in_course
 from .views import CourseCreateView, CourseUpdateView, LessonCreateView, LessonDetailView, delete_course
-from .views import teacher_course_students, teacher_student_progress, mark_lesson_complete
+from .views import teacher_course_students, teacher_student_progress, submit_feedback, mark_lesson_complete
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
@@ -20,8 +19,8 @@ urlpatterns = [
     path('courses/<int:pk>/delete/', delete_course, name='course-delete'),
     path('courses/<int:course_id>/lessons/new/', LessonCreateView.as_view(), name='lesson-create'),
     path('lessons/<int:pk>/', LessonDetailView.as_view(), name='lesson-detail'),
+    path('lessons/<int:lesson_id>/feedback/', submit_feedback, name='lesson-feedback'),
     path('lessons/<int:lesson_id>/complete/', mark_lesson_complete, name='mark-lesson-complete'),
     path('courses/<int:course_id>/students/', teacher_course_students, name='teacher-course-students'),
-    path('courses/<int:course_id>/students/<int:student_id>/', teacher_student_progress,
-         name='teacher-student-progress'),
+    path('courses/<int:course_id>/students/<int:student_id>/', teacher_student_progress, name='teacher-student-progress'),
 ]
