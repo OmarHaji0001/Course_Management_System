@@ -32,8 +32,16 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         course = get_object_or_404(Course, pk=self.kwargs['pk'])
         now = datetime.now()
+
+        # Add a flag to each lesson indicating if it's open
+        lessons = []
+        for lesson in course.lesson_set.all():
+            lesson.is_open = lesson.open_date < now.date() or (
+                lesson.open_date == now.date() and lesson.open_time <= now.time())
+            lessons.append(lesson)
+
         context['course'] = course
-        context['lessons'] = course.lesson_set.filter(open_date__lte=now.date(), open_time__lte=now.time())
+        context['lessons'] = lessons
         return context
 
 

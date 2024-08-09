@@ -68,6 +68,15 @@ ul.course-list li {
     position: relative;
 }
 
+.gray {
+    color: gray;
+    cursor: not-allowed;
+}
+
+.gray span {
+    pointer-events: none;
+}
+
 ul.course-list li.gray {
     background-color: #444;
     color: #999;

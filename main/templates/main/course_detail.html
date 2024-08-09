@@ -28,11 +28,18 @@
     <h3>Lessons</h3>
     <ul>
         {% for lesson in lessons %}
-            <li>
+            {% if lesson.is_open %}
+                <li>
                 <a href="{% url 'lesson-detail' lesson.id %}">{{ lesson.name }}</a>
-            </li>
+                </li>
+                {% else %}
+                <li class="gray">
+                <span>{{ lesson.name }}</span>
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
+
 </main>
 </body>
 </html>
