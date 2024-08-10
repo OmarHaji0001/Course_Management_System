@@ -19,6 +19,10 @@
     </nav>
 </header>
 <main>
+    <h3>Course Progress</h3>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: {{ progress_percentage }}%;" aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100">{{ progress_percentage|floatformat:2 }}%</div>
+        </div>
     <h3>Completed Lessons</h3>
     <ul>
         {% for completion in completions %}

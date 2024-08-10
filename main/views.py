@@ -124,7 +124,6 @@ def submit_feedback(request, course_id):
     return redirect('course-detail', pk=course.id)
 
 
-
 @login_required
 def teacher_course_students(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
@@ -138,11 +137,17 @@ def teacher_student_progress(request, course_id, student_id):
     student = get_object_or_404(User, pk=student_id)
     completions = Completion.objects.filter(student=student, lesson__course=course)
     feedbacks = Feedback.objects.filter(student=student, course=course)
+
+    total_lessons = course.lesson_set.count()
+    completed_lessons = completions.count()
+    progress_percentage = (completed_lessons / total_lessons) * 100 if total_lessons > 0 else 0
+
     return render(request, 'main/teacher_student_progress.html', {
         'course': course,
         'student': student,
         'completions': completions,
         'feedbacks': feedbacks,
+        'progress_percentage': progress_percentage,
     })
 
 
