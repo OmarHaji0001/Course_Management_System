@@ -17,6 +17,13 @@
         </form>
     </nav>
 </header>
+
+<!-- Buttons for All Courses and Enrolled Courses -->
+<div class="course-filter">
+    <a href="{% url 'dashboard' %}" class="btn {% if not filter %}btn-primary{% else %}btn-secondary{% endif %}">All Courses</a>
+    <a href="{% url 'dashboard' %}?filter=enrolled" class="btn {% if filter == 'enrolled' %}btn-primary{% else %}btn-secondary{% endif %}">Enrolled Courses</a>
+</div>
+
 <main>
     {% if messages %}
         <div>
@@ -35,17 +42,18 @@
             {% endif %}
             <p>{{ course.description }}</p>
             <p>Open for Registration: {{ course.open_for_registration }}</p>
-            {% if course.open_for_registration %}
+            {% if course.is_enrolled %}
+            <button class="btn btn-secondary" disabled>Enrolled</button>
+            {% else %}
             <form method="POST" action="{% url 'enroll-in-course' course.id %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Enroll</button>
             </form>
-            {% else %}
-            <button class="btn btn-secondary" disabled>Enrollment Closed</button>
             {% endif %}
         </li>
         {% endfor %}
     </ul>
 </main>
+
 </body>
 </html>

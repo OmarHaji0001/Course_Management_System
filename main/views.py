@@ -206,10 +206,22 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['courses'] = Course.objects.all()
-        context['today'] = datetime.now().date()
-        context['now'] = datetime.now().time()
+        user = self.request.user
+        filter_type = self.request.GET.get('filter', '')
+
+        if filter_type == 'enrolled':
+            enrolled_courses = Enrollment.objects.filter(user=user).values_list('course_id', flat=True)
+            courses = Course.objects.filter(id__in=enrolled_courses)
+        else:
+            courses = Course.objects.all()
+
+        for course in courses:
+            course.is_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
+
+        context['courses'] = courses
+        context['filter'] = filter_type
         return context
+
 
 
 @login_required
