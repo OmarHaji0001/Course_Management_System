@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Course, Lesson, Feedback
+from .models import Course, Lesson, Feedback, Profile
 
 
 class CourseForm(forms.ModelForm):
@@ -26,23 +26,20 @@ class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional')
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional')
     email = forms.EmailField(max_length=254, help_text='Enter a valid email address')
+    address_line1 = forms.CharField(max_length=255, required=True, help_text='Required')
+    address_line2 = forms.CharField(max_length=255, required=False, help_text='Optional')
 
     class Meta:
         model = User
-        fields = [
-            'username',
-            'first_name',
-            'last_name',
-            'email',
-            'password1',
-            'password2',
-        ]
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
-            user.profile.role = 'student'  # Set default role to student
-            user.profile.save()
+            # The profile is created automatically by the signal, so no need to create it manually here
+            user.profile.address_line1 = self.cleaned_data['address_line1']
+            user.profile.address_line2 = self.cleaned_data['address_line2']
+            user.profile.save()  # Save the profile with the additional fields
         return user

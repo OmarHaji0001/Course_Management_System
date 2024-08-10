@@ -61,6 +61,8 @@ class Profile(models.Model):
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=USER_ROLES, default='student')
+    address_line1 = models.CharField(max_length=255)
+    address_line2 = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f'{self.user.username} - {self.get_role_display()}'

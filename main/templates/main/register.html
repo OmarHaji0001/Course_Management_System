@@ -19,7 +19,7 @@
                 <div class="card-body">
                     <form method="POST">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        {{ form.as_p }} <!-- This will automatically include the address fields from the form -->
                         <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </form>
                 </div>
