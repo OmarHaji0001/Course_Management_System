@@ -32,6 +32,7 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course = get_object_or_404(Course, pk=self.kwargs['pk'])
+        user = self.request.user
         now = datetime.now()
 
         # Add a flag to each lesson indicating if it's open
@@ -41,8 +42,19 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
                 lesson.open_date == now.date() and lesson.open_time <= now.time())
             lessons.append(lesson)
 
+        # Calculate the number of completed lessons
+        completed_lessons = Completion.objects.filter(student=user, lesson__course=course).count()
+        total_lessons = len(lessons)
+
+        # Calculate progress percentage
+        if total_lessons > 0:
+            progress = (completed_lessons / total_lessons) * 100
+        else:
+            progress = 0
+
         context['course'] = course
         context['lessons'] = lessons
+        context['progress'] = progress  # Add progress to the context
         return context
 
 
@@ -221,7 +233,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['courses'] = courses
         context['filter'] = filter_type
         return context
-
 
 
 @login_required

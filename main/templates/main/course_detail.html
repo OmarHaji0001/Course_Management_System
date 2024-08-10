@@ -25,21 +25,28 @@
     {% if course.cover_image %}
     <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}" style="max-width: 300px;">
     {% endif %}
+<br><br>
+    <!-- Progress Bar -->
+    <div class="progress" style="height: 30px; margin-bottom: 20px;">
+        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">
+            {{ progress|floatformat:0 }}% Complete
+        </div>
+    </div>
+
     <h3>Lessons</h3>
     <ul>
         {% for lesson in lessons %}
             {% if lesson.is_open %}
                 <li>
-                <a href="{% url 'lesson-detail' lesson.id %}">{{ lesson.name }}</a>
+                    <a href="{% url 'lesson-detail' lesson.id %}">{{ lesson.name }}</a>
                 </li>
-                {% else %}
+            {% else %}
                 <li class="gray">
-                <span>{{ lesson.name }}</span>
+                    <span>{{ lesson.name }}</span>
                 </li>
             {% endif %}
         {% endfor %}
     </ul>
-
 </main>
 </body>
 </html>
