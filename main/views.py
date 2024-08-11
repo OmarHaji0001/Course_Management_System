@@ -190,6 +190,12 @@ def delete_course(request, pk):
 class HomeView(TemplateView):
     template_name = 'main/home.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Filter courses that are open for registration and order them by creation date
+        context['new_courses'] = Course.objects.filter(open_for_registration=True).order_by('-created_at')[:8]
+        return context
+
 
 class SignUpView(CreateView):
     form_class = SignUpForm

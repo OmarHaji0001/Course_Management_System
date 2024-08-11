@@ -4,19 +4,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <title>Home</title>
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Course Management System</h1>
+    <header class="top-bar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo">
+        </a>
         <nav>
-            <a href="{% url 'register' %}">Register</a>
-            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'login' %}" class="btn btn-link">Sign in</a>
+            <a href="{% url 'register' %}" class="btn btn-custom">Register</a>
         </nav>
-    </header>
-    <footer>
+    </div>
+</header>
+
+    <!-- Full-width image section -->
+    <section class="hero-section">
+        <img src="{% static 'images/homeTopPhoto.jpg' %}" alt="Hero Image" class="img-fluid w-100">
+        <div class="menu-icon">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="Search">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="logo-center">
+            <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo-image">
+        </div>
+        <div class="hero-text">
+            <h1>ALL WE NEED IS A LITTLE LOVE AND KINDNESS</h1>
+            <p>Reaching out is an expression of your strength.</p>
+            <div class="btn-group">
+                <a href="#" class="btn btn-primary">All Courses</a>
+                <a href="#" class="btn btn-primary">Online Courses</a>
+                <a href="#" class="btn btn-primary">Free Courses</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Carousel Section with Header -->
+    <section class="featured-courses mt-5">
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <h2>New Courses</h2>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="carousel-controls">
+                        <button class="btn btn-outline-secondary" href="#courseCarousel" role="button" data-slide="prev">
+                            &lt; Previous
+                        </button>
+                        <button class="btn btn-outline-secondary" href="#courseCarousel" role="button" data-slide="next">
+                            Next &gt;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="courseCarousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for course in new_courses %}
+                        {% if forloop.counter0|divisibleby:4 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="row">
+                        {% endif %}
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ course.name }}</h5>
+                                            <p class="card-text">{{ course.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                        {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="content">
+        <!-- Add your page content here -->
+    </div>
+
+    <footer class="footer">
         <p>&copy; 2024 Course Management System</p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

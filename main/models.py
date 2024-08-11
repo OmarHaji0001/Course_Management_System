@@ -8,6 +8,7 @@ class Course(models.Model):
     description = models.TextField()
     cover_image = models.ImageField(upload_to='course_images/', null=True, blank=True)
     open_for_registration = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
