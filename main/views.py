@@ -1,9 +1,9 @@
 # views.py
 from audioop import reverse
-
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
@@ -107,6 +107,7 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
     model = Course
     template_name = 'main/teachers_dashboard.html'
     success_url = reverse_lazy('teacher-dashboard')
+
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class EditLessonsView(LoginRequiredMixin, TemplateView):
@@ -253,7 +254,9 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Filter courses that are open for registration and order them by creation date
+        context['categories'] = Category.objects.all()
         context['new_courses'] = Course.objects.filter(open_for_registration=True).order_by('-created_at')[:8]
+        context['featured_courses'] = Course.objects.annotate(enrollment_count=Count('enrollment')).order_by('-enrollment_count')[:8]
         return context
 
 

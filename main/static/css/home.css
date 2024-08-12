@@ -1,5 +1,5 @@
 body {
-    background-color: #fff;
+    background-color: #f8f8f8;
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -153,7 +153,6 @@ nav {
 
 .carousel-container {
     max-width: 1200px; /* Set the maximum width for the carousel */
-    margin: 0 auto; /* Center the carousel horizontally */
     padding: 0 20px; /* Add padding on the left and right sides */
 }
 h2{
@@ -202,6 +201,65 @@ h2{
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
 }
+
+.subject-areas {
+    padding-top: 80px; /* Space above the section */
+    padding-bottom: 80px; /* Space below the section */
+    background-color: white;
+    margin-top: 75px;
+    margin-bottom: 40px;
+}
+
+.container {
+    max-width: 1200px; /* Optional: Control the maximum width of the container */
+    margin: 0 auto; /* Center the container */
+}
+
+.subject-areas h2 {
+    font-family: Merriweather, serif;
+    font-style: normal;
+    font-weight: 300;
+    color: #333; /* Adjust the color as needed */
+    text-rendering: optimizeLegibility;
+}
+
+.subject-area {
+    display: flex;
+    align-items: center;
+    color: #900; /* Adjust to your desired color */
+}
+
+.subject-area i {
+    color: #900; /* Adjust the icon color */
+    margin-right: 10px; /* Space between the icon and the text */
+}
+
+.subject-area h5 {
+    font-family: Merriweather, serif;
+    font-size: 1.2em;
+    font-weight: 400;
+    color: inherit;
+    margin: 0; /* Ensure no extra margin */
+}
+
+.all-courses-btn {
+    background-color: #900; /* The red color similar to the image */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Adjust padding for size */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1.2em; /* Adjust font size */
+    text-align: center;
+    font-family: Arial, sans-serif; /* Ensure it uses a simple, clean font */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+    transition: background-color 0.3s ease; /* Smooth transition for hover */
+}
+
+.all-courses-btn:hover {
+    background-color: #841626; /* Darken the color on hover */
+    cursor: pointer;
+}
+
 
 .content {
     flex: 1;

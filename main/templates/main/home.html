@@ -35,8 +35,11 @@
             <i class="fas fa-search"></i>
         </div>
         <div class="logo-center">
-            <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo-image">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo-image">
+            </a>
         </div>
+
         <div class="hero-text">
             <h1>ALL WE NEED IS A LITTLE LOVE AND KINDNESS</h1>
             <p>Reaching out is an expression of your strength.</p>
@@ -47,6 +50,75 @@
             </div>
         </div>
     </section>
+    <!-- New Featured Courses Section -->
+    <section class="featured-courses mt-5">
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <h2>Featured Courses</h2>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="carousel-controls">
+                        <button class="btn btn-outline-secondary" href="#featuredCourseCarousel" role="button" data-slide="prev">
+                            &lt; Previous
+                        </button>
+                        <button class="btn btn-outline-secondary" href="#featuredCourseCarousel" role="button" data-slide="next">
+                            Next &gt;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="featuredCourseCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                <div class="carousel-inner">
+                    {% for course in featured_courses %}
+                        {% if forloop.counter0|divisibleby:4 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="row">
+                        {% endif %}
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ course.name }}</h5>
+                                            <p class="card-text">{{ course.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                        {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+     <!-- Subject Areas Section -->
+    <section class="subject-areas">
+        <div class="container"> <!-- Added a container to wrap the content -->
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <h2>Subject Areas</h2>
+                </div>
+                <div class="col-md-4 text-right">
+                    <button class="btn btn-primary all-courses-btn">All Courses</button>
+                </div>
+            </div>
+
+            <div class="row">
+                {% for category in categories %}
+                <div class="col-md-3 mb-3">
+                    <div class="subject-area d-flex align-items-center">
+                        <i class="fas fa-book fa-2x mr-2"></i>
+                        <h5 class="mb-0">{{ category.name }}</h5>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
 
     <!-- Carousel Section with Header -->
     <section class="featured-courses mt-5">
