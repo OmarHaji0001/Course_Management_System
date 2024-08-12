@@ -3,6 +3,7 @@ from audioop import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
@@ -276,9 +277,63 @@ class AllCoursesView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['all_courses'] = Course.objects.filter(open_for_registration=True).order_by('-created_at')
+        courses = Course.objects.filter(open_for_registration=True).order_by('-created_at')
+
+        subject_area = self.request.GET.get('subject_area')
+        price = self.request.GET.get('price')
+        start_date = self.request.GET.get('start_date')
+        duration = self.request.GET.get('duration')
+        modality = self.request.GET.get('modality')
+
+        if subject_area:
+            courses = courses.filter(category_id=subject_area)
+
+        if price:
+            if price == 'free':
+                courses = courses.filter(price=0)
+            elif price == 'paid':
+                courses = courses.exclude(price=0)
+
+        if start_date:
+            now = timezone.now()
+            if start_date == '1_week':
+                courses = courses.filter(start_date__lte=now + timedelta(weeks=1))
+            elif start_date == '1_month':
+                courses = courses.filter(start_date__lte=now + timedelta(weeks=4))
+            elif start_date == '3_months':
+                courses = courses.filter(start_date__lte=now + timedelta(weeks=12))
+            elif start_date == '6_months':
+                courses = courses.filter(start_date__lte=now + timedelta(weeks=26))
+            elif start_date == '1_year':
+                courses = courses.filter(start_date__lte=now + timedelta(weeks=52))
+
+        if duration:
+            if duration == '0_1':
+                courses = courses.filter(duration_weeks__lte=1)
+            elif duration == '1_3':
+                courses = courses.filter(duration_weeks__gt=1, duration_weeks__lte=3)
+            elif duration == '3_6':
+                courses = courses.filter(duration_weeks__gt=3, duration_weeks__lte=6)
+            elif duration == '6_9':
+                courses = courses.filter(duration_weeks__gt=6, duration_weeks__lte=9)
+            elif duration == '9_12':
+                courses = courses.filter(duration_weeks__gt=9, duration_weeks__lte=12)
+            elif duration == '12_plus':
+                courses = courses.filter(duration_weeks__gt=12)
+
+        if modality:
+            courses = courses.filter(modality=modality)
+
+        # Pagination
+        paginator = Paginator(courses, 12)  # Show 12 courses per page
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context['page_obj'] = page_obj
+        context['courses'] = page_obj.object_list
         context['subject_areas'] = Category.objects.all()
         return context
+
 
 
 class SignUpView(CreateView):
