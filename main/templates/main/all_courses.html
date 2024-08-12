@@ -5,34 +5,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/all_courses.css' %}">
     <title>All Courses</title>
 </head>
 <body>
-    <header>
-        <!-- Your header content -->
+    <header class="top-bar">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo">
+            </a>
+            <nav>
+                <a href="{% url 'login' %}" class="btn btn-link">Sign in</a>
+                <a href="{% url 'register' %}" class="btn btn-custom">Register</a>
+            </nav>
+        </div>
     </header>
-    <main>
-        <div class="container">
-            <h1>All Courses</h1>
-            <div class="row">
-                {% for course in courses %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <img src="{{ course.cover_image.url }}" class="card-img-top" alt="{{ course.name }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ course.name }}</h5>
-                            <p class="card-text">{{ course.description }}</p>
-                            <a href="{% url 'course-detail' course.pk %}" class="btn btn-primary">View Course</a>
+
+    <!-- Hero Section with Background Color -->
+    <section class="hero-section">
+        <div class="hero-bg">
+            <div class="menu-icon">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div>
+                <a href="{% url 'all_courses' %}" class="btn btn-primary">All Courses</a>
+            </div>
+            <div class="search-box">
+                <label>
+                    <input type="text" placeholder="Search">
+                </label>
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="logo-center">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo-image">
+                </a>
+            </div>
+
+            <!-- Filter Bar at the Bottom of Hero Section -->
+            <div class="filter-bar">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-2">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="subjectAreaDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Subject Area
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="subjectAreaDropdown">
+                                    <a class="dropdown-item" href="#">Business</a>
+                                    <a class="dropdown-item" href="#">Technology</a>
+                                    <a class="dropdown-item" href="#">Health</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="priceDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Price
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="priceDropdown">
+                                    <a class="dropdown-item" href="#">Free</a>
+                                    <a class="dropdown-item" href="#">Under $50</a>
+                                    <a class="dropdown-item" href="#">$50 - $100</a>
+                                    <a class="dropdown-item" href="#">$100+</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="startDateDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Start Date
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="startDateDropdown">
+                                    <div class="form-group px-3">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox"> Available now
+                                        </label>
+                                    </div>
+                                    <div class="form-group px-3">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox"> Within next week
+                                        </label>
+                                    </div>
+                                    <div class="form-group px-3">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox"> Within next month
+                                        </label>
+                                    </div>
+                                    <div class="form-group px-3">
+                                        <label for="startingAfter">Starting after</label>
+                                        <input type="date" class="form-control" id="startingAfter">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="durationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Duration
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="durationDropdown">
+                                    <a class="dropdown-item" href="#">1 - 4 weeks</a>
+                                    <a class="dropdown-item" href="#">5 - 8 weeks</a>
+                                    <a class="dropdown-item" href="#">9 - 12 weeks</a>
+                                    <a class="dropdown-item" href="#">12+ weeks</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="modalityDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Modality
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="modalityDropdown">
+                                    <a class="dropdown-item" href="#">Online</a>
+                                    <a class="dropdown-item" href="#">Blended</a>
+                                    <a class="dropdown-item" href="#">In-Person</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
         </div>
-    </main>
-    <footer>
-        <!-- Your footer content -->
-    </footer>
+    </section>
+
+    <!-- Include jQuery first -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- Include Popper.js second -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+
+    <!-- Include Bootstrap JS third -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Manually Initialize Dropdowns -->
+    <script>
+        $(document).ready(function(){
+            $('.dropdown-toggle').dropdown();
+        });
+    </script>
 </body>
 </html>

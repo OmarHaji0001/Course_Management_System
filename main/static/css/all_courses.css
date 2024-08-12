@@ -1,0 +1,56 @@
+@import url('home.css');
+
+.btn-primary {
+    background-color: #db8141; /* Adjust color as needed */
+    border: none;
+    border-radius: 5px;
+    padding: 12px 25px;
+    margin-top: 35px;
+    margin-left: 170px;
+}
+.btn-primary:hover {
+    background-color: #ca62a4; /* Adjust color as needed */
+}
+
+.hero-section .hero-bg {
+    background-color: #900; /* Replace with your desired background color */
+    width: 100%;
+    height: 400px; /* Adjust the height as needed */
+    position: relative;
+}
+
+.filter-bar {
+    padding: 15px 20px;
+    position: absolute;
+    bottom: 0; /* Stick to the bottom of the hero section */
+    width: 100%;
+}
+
+.filter-bar .btn-secondary {
+    background-color: transparent;
+    color: white;
+    border: none;
+}
+
+.filter-bar .btn-secondary:hover {
+    background-color: #1abc9c; /* A light hover effect */
+}
+
+.filter-bar .dropdown-menu {
+    background-color: #34495e; /* Background color for the dropdown */
+    color: white;
+    border: none;
+}
+
+.filter-bar .dropdown-menu a {
+    color: white; /* Dropdown item text color */
+}
+
+.filter-bar .dropdown-menu a:hover {
+    background-color: #1abc9c; /* Hover effect for dropdown items */
+    color: white;
+}
+
+.row.justify-content-center {
+    justify-content: space-between; /* Ensure even spacing between dropdowns */
+}

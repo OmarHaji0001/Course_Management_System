@@ -10,17 +10,17 @@
     <title>Home</title>
 </head>
 <body>
-    <header class="top-bar">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-        <a href="{% url 'home' %}">
-            <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo">
-        </a>
-        <nav>
-            <a href="{% url 'login' %}" class="btn btn-link">Sign in</a>
-            <a href="{% url 'register' %}" class="btn btn-custom">Register</a>
-        </nav>
-    </div>
-</header>
+   <header class="top-bar">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo">
+            </a>
+            <nav>
+                <a href="{% url 'login' %}" class="btn btn-link">Sign in</a>
+                <a href="{% url 'register' %}" class="btn btn-custom">Register</a>
+            </nav>
+        </div>
+    </header>
 
     <!-- Full-width image section -->
     <section class="hero-section">
@@ -44,7 +44,7 @@
             <h1>ALL WE NEED IS A LITTLE LOVE AND KINDNESS</h1>
             <p>Reaching out is an expression of your strength.</p>
             <div class="btn-group">
-                <a href="#" class="btn btn-primary">All Courses</a>
+                <a href="{% url 'all_courses' %}" class="btn btn-primary">All Courses</a>
                 <a href="#" class="btn btn-primary">Online Courses</a>
                 <a href="#" class="btn btn-primary">Free Courses</a>
             </div>
@@ -104,7 +104,8 @@
             </div>
         </div>
     </section>
-     <!-- Subject Areas Section -->
+
+    <!-- Subject Areas Section -->
     <section class="subject-areas">
         <div class="container">
             <div class="row mb-3">
@@ -112,7 +113,7 @@
                     <h2>Subject Areas</h2>
                 </div>
                 <div class="col-md-4 text-right">
-                    <button class="btn btn-primary all-courses-btn">All Courses</button>
+                    <button class="btn btn-primary all-courses-btn" onclick="window.location.href='{% url 'all_courses' %}'">All Courses</button>
                 </div>
             </div>
 
@@ -128,7 +129,6 @@
             </div>
         </div>
     </section>
-
 
     <!-- Carousel Section with Header -->
     <section class="featured-courses mt-5">

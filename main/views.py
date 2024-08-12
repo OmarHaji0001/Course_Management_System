@@ -271,6 +271,16 @@ class HomeView(TemplateView):
         return context
 
 
+class AllCoursesView(TemplateView):
+    template_name = 'main/all_courses.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_courses'] = Course.objects.filter(open_for_registration=True).order_by('-created_at')
+        context['subject_areas'] = Category.objects.all()
+        return context
+
+
 class SignUpView(CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy('login')

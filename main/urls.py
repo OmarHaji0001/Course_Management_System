@@ -4,11 +4,12 @@ from .views import (
     admin_dashboard, teacher_dashboard, CourseDetailView, enroll_in_course,
     CourseCreateView, CourseUpdateView, LessonCreateView, LessonDetailView,
     delete_course, teacher_course_students, teacher_student_progress,
-    mark_lesson_complete, submit_feedback, add_category, EditLessonsView
+    mark_lesson_complete, submit_feedback, add_category, EditLessonsView, AllCoursesView
 )
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
+    path('all-courses/', AllCoursesView.as_view(), name='all_courses'),
     path('register/', SignUpView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
