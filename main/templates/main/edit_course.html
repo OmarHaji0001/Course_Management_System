@@ -84,6 +84,11 @@
             <label for="id_open_for_registration">Open for Registration:</label>
             {{ form.open_for_registration }}
         </div>
+        <div class="form-group">
+    <label for="id_start_date">Start Date:</label>
+    <input type="date" name="start_date" id="id_start_date" class="form-control" value="{{ form.start_date.value|date:'Y-m-d' }}">
+</div>
+
 
         <button type="submit" class="btn btn-primary" name="save_course">Save Changes</button>
     </form>

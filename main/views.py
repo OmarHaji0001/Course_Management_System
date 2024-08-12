@@ -13,7 +13,8 @@ from django.utils.decorators import method_decorator
 from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm
 from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag
 from django.contrib import messages
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 
 class CourseCreateView(LoginRequiredMixin, CreateView):
@@ -25,6 +26,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         course = form.save(commit=False)
         course.cover_image = self.request.FILES.get('cover_image')
+        course.start_date = form.cleaned_data['start_date']  # Handle the start date
         course.save()
 
         # Handle tags
@@ -96,6 +98,10 @@ class CourseUpdateView(LoginRequiredMixin, UpdateView):
                 for tag_name in tags_list:
                     tag, created = Tag.objects.get_or_create(name=tag_name)
                     self.object.tags.add(tag)
+
+            # Handle start date
+            self.object.start_date = form.cleaned_data['start_date']
+            self.object.save()
 
             return response
         else:
@@ -257,6 +263,11 @@ class HomeView(TemplateView):
         context['categories'] = Category.objects.all()
         context['new_courses'] = Course.objects.filter(open_for_registration=True).order_by('-created_at')[:8]
         context['featured_courses'] = Course.objects.annotate(enrollment_count=Count('enrollment')).order_by('-enrollment_count')[:8]
+        now = timezone.now().date()
+        one_week_later = now + timedelta(weeks=1)
+        context['starting_soon_courses'] = Course.objects.filter(
+            start_date__range=[now, one_week_later]
+        ).order_by('start_date')[:8]
         return context
 
 

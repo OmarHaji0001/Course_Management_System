@@ -165,6 +165,59 @@
         </div>
     </section>
 
+    <!-- Full-Width Follow Our Journey Section -->
+    <section class="journey-section">
+        <div class="journey-content">
+            <a href="https://www.instagram.com/your_account" target="_blank" class="journey-button">
+                FOLLOW OUR JOURNEY
+            </a>
+            <p class="journey-text">Love & Kindness mental health counselor team offers wellness services and provides complete holistic healing practices designed to enrich the lives of all who enter this space. Our approach to wellness fosters professional development as well as the development of self-confidence, self-care habits, and a strong connection to a sense of purpose and meaning.</p>
+        </div>
+    </section>
+    <!-- Starting Soon Section -->
+    <section class="featured-courses mt-5">
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <h2>Starting Soon</h2>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="carousel-controls">
+                        <button class="btn btn-outline-secondary" href="#startingSoonCarousel" role="button" data-slide="prev">
+                            &lt; Previous
+                        </button>
+                        <button class="btn btn-outline-secondary" href="#startingSoonCarousel" role="button" data-slide="next">
+                            Next &gt;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="startingSoonCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                <div class="carousel-inner">
+                    {% for course in starting_soon_courses %}
+                        {% if forloop.counter0|divisibleby:4 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="row">
+                        {% endif %}
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ course.name }}</h5>
+                                            <p class="card-text">{{ course.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                        {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
     <div class="content">
         <!-- Add your page content here -->
     </div>
