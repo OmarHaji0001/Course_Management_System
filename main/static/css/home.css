@@ -156,20 +156,26 @@ nav {
     margin: 0 auto; /* Center the carousel horizontally */
     padding: 0 20px; /* Add padding on the left and right sides */
 }
-
+h2{
+    font-family: Merriweather, serif;
+    font-style: normal;
+    font-weight: 300;
+    color: inherit;
+    text-rendering: optimizeLegibility;
+}
 .carousel-controls {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
-    padding-right: 20px;
 }
 
 .carousel-controls .btn {
+    font-family: Merriweather, serif;
     margin-left: 10px;
     padding: 10px 20px;
     border-radius: 5px;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
     color: #333;
     background-color: #fff;
     border: 1px solid #ccc;

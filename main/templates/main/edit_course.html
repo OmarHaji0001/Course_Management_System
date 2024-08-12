@@ -7,44 +7,145 @@
     <title>Edit Course</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/TD.css' %}">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
 <header>
     <h1>Edit Course</h1>
-        <nav>
+    <nav>
         <form id="logout-form" method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit">Logout</button>
+            <button type="submit" class="btn btn-danger">Logout</button>
         </form>
     </nav>
 </header>
 <main>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+            <label for="id_name">Course Name:</label>
+            {{ form.name }}
+        </div>
+        <div class="form-group">
+            <label for="id_description">Course Description:</label>
+            {{ form.description }}
+        </div>
+        <div class="form-group">
+            <label for="id_category">Category:</label>
+            <div class="input-group">
+                <select name="category" id="id_category" class="form-control">
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category.id == form.category.value %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">
+                        Add Category
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tags Input -->
+        <div class="form-group">
+            <label for="id_tags">Tags (comma-separated):</label>
+            <input type="text" name="tags" id="id_tags" class="form-control" value="{% for tag in form.instance.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+        </div>
+
+        <!-- Price Input -->
+        <div class="form-group">
+            <label for="id_price">Price:</label>
+            {{ form.price }}
+        </div>
+
+        <!-- Duration in Weeks -->
+        <div class="form-group">
+            <label for="id_duration_weeks">Duration (in weeks):</label>
+            {{ form.duration_weeks }}
+        </div>
+
+       <div class="form-group">
+    <label for="id_modality">Modality:</label>
+    <select name="modality" id="id_modality" class="form-control">
+        <option value="online" {% if form.modality.value == 'online' %}selected{% endif %}>Online</option>
+        <option value="blended" {% if form.modality.value == 'blended' %}selected{% endif %}>Blended</option>
+        <option value="in_person" {% if form.modality.value == 'in_person' %}selected{% endif %}>In-Person</option>
+    </select>
+</div>
+
+        <div class="form-group">
+            <label for="id_cover_image">Cover Image:</label>
+            {{ form.cover_image }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_open_for_registration">Open for Registration:</label>
+            {{ form.open_for_registration }}
+        </div>
+
         <button type="submit" class="btn btn-primary" name="save_course">Save Changes</button>
     </form>
-
-    <h3>Lessons</h3>
-    <ul>
-        {% for lesson in lessons %}
-        <li>
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
-                <div>
-                    <label for="lesson_name_{{ lesson.id }}">Lesson Name:</label>
-                    <input type="text" name="name" id="lesson_name_{{ lesson.id }}" value="{{ lesson.name }}">
-                </div>
-                <div>
-                    <label for="lesson_description_{{ lesson.id }}">Lesson Description:</label>
-                    <textarea name="description" id="lesson_description_{{ lesson.id }}">{{ lesson.description }}</textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm" name="save_lesson">Save Lesson</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
 </main>
+
+<!-- Modal for Adding Category -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addCategoryForm" method="POST" action="{% url 'add-category' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="category_name">Category Name</label>
+                        <input type="text" class="form-control" id="category_name" name="category_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category_description">Category Description</label>
+                        <textarea class="form-control" id="category_description" name="category_description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Add Category</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#addCategoryForm').on('submit', function(e) {
+            e.preventDefault();  // Prevent the default form submission
+
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        // Append the new category to the dropdown
+                        $('#id_category').append(new Option(response['category_name'], response['category_id']));
+                        $('#addCategoryModal').modal('hide'); // Hide the modal
+                        $('#addCategoryForm')[0].reset(); // Reset the form
+                    } else {
+                        alert('There was an error adding the category.');
+                    }
+                },
+                error: function() {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

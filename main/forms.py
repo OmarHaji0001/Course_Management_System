@@ -1,13 +1,21 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Course, Lesson, Feedback, Profile
+from .models import Course, Lesson, Feedback, Category
 
 
 class CourseForm(forms.ModelForm):
+    tags = forms.CharField(required=False, help_text="Enter tags separated by commas")
+
     class Meta:
         model = Course
-        fields = ['name', 'description', 'cover_image', 'open_for_registration']
+        fields = ['name', 'description', 'cover_image', 'category', 'price', 'duration_weeks', 'modality', 'open_for_registration']
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'description']
 
 
 class LessonForm(forms.ModelForm):

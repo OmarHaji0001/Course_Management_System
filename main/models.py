@@ -1,14 +1,55 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import date, time
+from django.utils.text import slugify
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    slug = models.SlugField(unique=True, max_length=255)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, max_length=255)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
 
 class Course(models.Model):
+    MODALITY_CHOICES = [
+        ('online', 'Online'),
+        ('blended', 'Blended'),
+        ('in_person', 'In-Person'),
+    ]
     name = models.CharField(max_length=100)
     description = models.TextField()
     cover_image = models.ImageField(upload_to='course_images/', null=True, blank=True)
     open_for_registration = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='courses')
+    tags = models.ManyToManyField(Tag, related_name='courses')
+    modality = models.CharField(max_length=10, choices=MODALITY_CHOICES, default='online')
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    duration_weeks = models.IntegerField(default=0)
+
+    def is_free(self):
+        return self.price == 0.00
 
     def __str__(self):
         return self.name

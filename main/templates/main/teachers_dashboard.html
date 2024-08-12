@@ -10,13 +10,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        function confirmDelete(courseId, courseName) {
-            document.querySelector('#deleteModal #courseName').textContent = courseName;
-            document.querySelector('#deleteModal form').setAttribute('action', `/courses/${courseId}/delete/`);
-            $('#deleteModal').modal('show');
-        }
-    </script>
 </head>
 <body>
 <header>
@@ -24,7 +17,7 @@
     <nav>
         <form id="logout-form" method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit">Logout</button>
+            <button type="submit" class="btn btn-danger">Logout</button>
         </form>
     </nav>
 </header>
@@ -33,19 +26,61 @@
     <!-- Create Course Form -->
     <form method="POST" action="{% url 'course-create' %}" enctype="multipart/form-data">
         {% csrf_token %}
-        <div>
+        <div class="form-group">
             <label for="id_name">Course Name:</label>
             {{ course_form.name }}
         </div>
-        <div>
+        <div class="form-group">
             <label for="id_description">Course Description:</label>
             {{ course_form.description }}
         </div>
-        <div>
+        <div class="form-group">
+            <label for="id_category">Category:</label>
+            <div class="input-group">
+                <select name="category" id="id_category" class="form-control">
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">
+                        Add Category
+                    </button>
+                </div>
+            </div>
+        </div>
+         <!-- Tags Input -->
+    <div class="form-group">
+        <label for="id_tags">Tags (comma-separated):</label>
+        <input type="text" name="tags" id="id_tags" class="form-control" placeholder="Enter tags separated by commas">
+    </div>
+
+    <!-- Price Input -->
+    <div class="form-group">
+        <label for="id_price">Price:</label>
+        <input type="number" step="0.01" name="price" id="id_price" class="form-control" placeholder="Enter course price">
+    </div>
+
+    <!-- Duration in Weeks -->
+    <div class="form-group">
+        <label for="id_duration_weeks">Duration (in weeks):</label>
+        <input type="number" name="duration_weeks" id="id_duration_weeks" class="form-control" placeholder="Enter course duration in weeks">
+    </div>
+
+    <!-- Modality Dropdown -->
+    <div class="form-group">
+        <label for="id_modality">Modality:</label>
+        <select name="modality" id="id_modality" class="form-control">
+            <option value="online">Online</option>
+            <option value="blended">Blended</option>
+            <option value="in_person">In-Person</option>
+        </select>
+    </div>
+        <div class="form-group">
             <label for="id_cover_image">Cover Image:</label>
             {{ course_form.cover_image }}
         </div>
-        <div>
+        <div class="form-group">
             <label for="id_open_for_registration">Open for Registration:</label>
             {{ course_form.open_for_registration }}
         </div>
@@ -63,7 +98,8 @@
             {% endif %}
             <p>{{ course.description }}</p>
             <p>Open for Registration: {{ course.open_for_registration }}</p>
-            <a href="{% url 'course-edit' course.pk %}" class="btn btn-primary btn-sm">Edit</a>
+            <a href="{% url 'course-edit' course.pk %}" class="btn btn-primary btn-sm">Edit Course</a>
+            <a href="{% url 'edit-lessons' course.pk %}" class="btn btn-warning btn-sm">Edit Lessons</a> <!-- New Edit Lessons button -->
             <a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="confirmDelete({{ course.pk }}, '{{ course.name }}');">Delete</a>
             <a href="{% url 'teacher-course-students' course.id %}" class="btn btn-info btn-sm">View Students</a>
             <!-- Add Lesson Form -->
@@ -102,29 +138,92 @@
     </ul>
 </main>
 
-<!-- Modal -->
+<!-- Modal for Adding Category -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addCategoryForm" method="POST" action="{% url 'add-category' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="category_name">Category Name</label>
+                        <input type="text" class="form-control" id="category_name" name="category_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category_description">Category Description</label>
+                        <textarea class="form-control" id="category_description" name="category_description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Add Category</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal for Confirming Delete -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete the course "<span id="courseName"></span>" and all its lessons?
+                <p>Are you sure you want to delete the course: <strong id="courseName"></strong>?</p>
             </div>
             <div class="modal-footer">
                 <form method="POST">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Yes, I'm sure</button>
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function confirmDelete(courseId, courseName) {
+        document.querySelector('#deleteModal #courseName').textContent = courseName;
+        document.querySelector('#deleteModal form').setAttribute('action', `/courses/${courseId}/delete/`);
+        $('#deleteModal').modal('show');
+    }
+
+     $(document).ready(function() {
+        $('#addCategoryForm').on('submit', function(e) {
+            e.preventDefault();  // Prevent the default form submission
+
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        // Append the new category to the dropdown
+                        $('#id_category').append(new Option(response['category_name'], response['category_id']));
+                        $('#addCategoryModal').modal('hide'); // Hide the modal
+                        $('#addCategoryForm')[0].reset(); // Reset the form
+                    } else {
+                        alert('There was an error adding the category.');
+                    }
+                },
+                error: function() {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

@@ -1,20 +1,21 @@
 # views.py
+from audioop import reverse
+
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed, JsonResponse
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
-from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm
-from .models import Course, Lesson, Enrollment, Completion, Feedback
+from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm
+from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag
 from django.contrib import messages
 from datetime import datetime
 
 
-@method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseCreateView(LoginRequiredMixin, CreateView):
     model = Course
     form_class = CourseForm
@@ -22,7 +23,18 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('teacher-dashboard')
 
     def form_valid(self, form):
-        form.instance.cover_image = self.request.FILES.get('cover_image')
+        course = form.save(commit=False)
+        course.cover_image = self.request.FILES.get('cover_image')
+        course.save()
+
+        # Handle tags
+        tags_input = form.cleaned_data['tags']
+        if tags_input:
+            tags_list = [tag.strip() for tag in tags_input.split(',')]
+            for tag_name in tags_list:
+                tag, created = Tag.objects.get_or_create(name=tag_name)
+                course.tags.add(tag)
+
         return super().form_valid(form)
 
 
@@ -67,27 +79,27 @@ class CourseUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['lesson_form'] = LessonForm()
-        context['lessons'] = self.object.lesson_set.all()
+        context['categories'] = Category.objects.all()  # Pass categories to the template
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if 'save_course' in request.POST:
-            form = self.get_form()
-            if form.is_valid():
-                return self.form_valid(form)
-            else:
-                return self.form_invalid(form)
-        elif 'save_lesson' in request.POST:
-            lesson_id = request.POST.get('lesson_id')
-            lesson = get_object_or_404(Lesson, id=lesson_id)
-            lesson_form = LessonForm(request.POST, instance=lesson)
-            if lesson_form.is_valid():
-                lesson_form.save()
-                return redirect('course-edit', pk=self.object.pk)
-            else:
-                return self.form_invalid(lesson_form)
+        form = self.get_form()
+        if form.is_valid():
+            response = self.form_valid(form)
+
+            # Handle tags
+            tags_input = form.cleaned_data.get('tags', '')
+            if tags_input:
+                tags_list = [tag.strip() for tag in tags_input.split(',')]
+                self.object.tags.clear()  # Clear existing tags
+                for tag_name in tags_list:
+                    tag, created = Tag.objects.get_or_create(name=tag_name)
+                    self.object.tags.add(tag)
+
+            return response
+        else:
+            return self.form_invalid(form)
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
@@ -95,6 +107,30 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
     model = Course
     template_name = 'main/teachers_dashboard.html'
     success_url = reverse_lazy('teacher-dashboard')
+
+@method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
+class EditLessonsView(LoginRequiredMixin, TemplateView):
+    template_name = 'main/edit_lesson.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course = get_object_or_404(Course, pk=self.kwargs['pk'])
+        context['course'] = course
+        context['lessons'] = course.lesson_set.all()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        course = get_object_or_404(Course, pk=self.kwargs['pk'])
+        lessons = course.lesson_set.all()
+
+        for lesson in lessons:
+            lesson.name = request.POST.get(f'name_{lesson.id}')
+            lesson.description = request.POST.get(f'description_{lesson.id}')
+            lesson.open_date = request.POST.get(f'open_date_{lesson.id}')
+            lesson.open_time = request.POST.get(f'open_time_{lesson.id}')
+            lesson.save()
+
+        return redirect('teacher-dashboard')
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
@@ -163,19 +199,43 @@ def teacher_student_progress(request, course_id, student_id):
     })
 
 
+@login_required
 def teacher_dashboard(request):
-    courses = Course.objects.all()
     if request.method == 'POST':
-        course_form = CourseForm(request.POST, request.FILES)
-        if course_form.is_valid():
-            course_form.save()
-            return redirect('teacher-dashboard')
+        if 'category_name' in request.POST:
+            category_form = CategoryForm(request.POST)
+            if category_form.is_valid():
+                category_form.save()
+                return redirect(reverse('teacher-dashboard'))
+            course_form = CourseForm()  # Ensure course_form is initialized if category is added
+        else:
+            course_form = CourseForm(request.POST, request.FILES)
+            if course_form.is_valid():
+                course_form.save()
+                return redirect('teacher-dashboard')
+            category_form = CategoryForm()  # Ensure category_form is initialized if course is created
     else:
         course_form = CourseForm()
+        category_form = CategoryForm()
+
+    categories = Category.objects.all()
+    courses = Course.objects.all()
     return render(request, 'main/teachers_dashboard.html', {
-        'courses': courses,
-        'course_form': course_form
+        'course_form': course_form,
+        'category_form': category_form,
+        'categories': categories,
+        'courses': courses
     })
+
+
+@login_required
+def add_category(request):
+    if request.method == 'POST':
+        category_name = request.POST.get('category_name')
+        category_description = request.POST.get('category_description')
+        category = Category.objects.create(name=category_name, description=category_description)
+        return JsonResponse({'success': True, 'category_id': category.id, 'category_name': category.name})
+    return JsonResponse({'success': False, 'errors': 'Invalid request'}, status=400)
 
 
 @user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor')
