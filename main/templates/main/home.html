@@ -50,6 +50,7 @@
             </div>
         </div>
     </section>
+
     <!-- New Featured Courses Section -->
     <section class="featured-courses mt-5">
         <div class="container">
@@ -72,20 +73,29 @@
             <div id="featuredCourseCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                 <div class="carousel-inner">
                     {% for course in featured_courses %}
-                        {% if forloop.counter0|divisibleby:4 %}
+                        {% if forloop.counter0|divisibleby:3 %}
                         <div class="carousel-item {% if forloop.first %}active{% endif %}">
                             <div class="row">
                         {% endif %}
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="card">
                                         <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
-                                        <div class="card-body">
+                                         <div class="card-body">
+                                            <div class="card-category-modality">
+                                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
+                                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}</p>
+                                            </div>
                                             <h5 class="card-title">{{ course.name }}</h5>
-                                            <p class="card-text">{{ course.description }}</p>
+                                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                                            <div class="card-price-duration">
+                                                <p class="card-price">${{ course.price }}</p>
+                                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
+                                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                        {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
+                        {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
                             </div>
                         </div>
                         {% endif %}
@@ -96,7 +106,7 @@
     </section>
      <!-- Subject Areas Section -->
     <section class="subject-areas">
-        <div class="container"> <!-- Added a container to wrap the content -->
+        <div class="container">
             <div class="row mb-3">
                 <div class="col-md-8">
                     <h2>Subject Areas</h2>
@@ -142,20 +152,30 @@
             <div id="courseCarousel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     {% for course in new_courses %}
-                        {% if forloop.counter0|divisibleby:4 %}
+                        {% if forloop.counter0|divisibleby:3 %}
                         <div class="carousel-item {% if forloop.first %}active{% endif %}">
                             <div class="row">
                         {% endif %}
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="card">
                                         <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
                                         <div class="card-body">
+                                            <div class="card-category-modality">
+                                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
+                                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}</p>
+                                            </div>
                                             <h5 class="card-title">{{ course.name }}</h5>
-                                            <p class="card-text">{{ course.description }}</p>
+                                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                                            <div class="card-price-duration">
+                                                <p class="card-price">${{ course.price }}</p>
+                                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
+                                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
-                        {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
+                        {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
                             </div>
                         </div>
                         {% endif %}
@@ -174,6 +194,7 @@
             <p class="journey-text">Love & Kindness mental health counselor team offers wellness services and provides complete holistic healing practices designed to enrich the lives of all who enter this space. Our approach to wellness fosters professional development as well as the development of self-confidence, self-care habits, and a strong connection to a sense of purpose and meaning.</p>
         </div>
     </section>
+
     <!-- Starting Soon Section -->
     <section class="featured-courses mt-5">
         <div class="container">
@@ -196,20 +217,29 @@
             <div id="startingSoonCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                 <div class="carousel-inner">
                     {% for course in starting_soon_courses %}
-                        {% if forloop.counter0|divisibleby:4 %}
+                        {% if forloop.counter0|divisibleby:3 %}
                         <div class="carousel-item {% if forloop.first %}active{% endif %}">
                             <div class="row">
                         {% endif %}
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="card">
                                         <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
                                         <div class="card-body">
+                                            <div class="card-category-modality">
+                                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
+                                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}</p>
+                                            </div>
                                             <h5 class="card-title">{{ course.name }}</h5>
-                                            <p class="card-text">{{ course.description }}</p>
+                                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                                            <div class="card-price-duration">
+                                                <p class="card-price">${{ course.price }}</p>
+                                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
+                                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                        {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
+                        {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
                             </div>
                         </div>
                         {% endif %}
@@ -218,6 +248,7 @@
             </div>
         </div>
     </section>
+
     <div class="content">
         <!-- Add your page content here -->
     </div>

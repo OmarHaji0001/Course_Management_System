@@ -261,13 +261,13 @@ class HomeView(TemplateView):
         context = super().get_context_data(**kwargs)
         # Filter courses that are open for registration and order them by creation date
         context['categories'] = Category.objects.all()
-        context['new_courses'] = Course.objects.filter(open_for_registration=True).order_by('-created_at')[:8]
-        context['featured_courses'] = Course.objects.annotate(enrollment_count=Count('enrollment')).order_by('-enrollment_count')[:8]
+        context['new_courses'] = Course.objects.filter(open_for_registration=True).order_by('-created_at')[:9]
+        context['featured_courses'] = Course.objects.annotate(enrollment_count=Count('enrollment')).order_by('-enrollment_count')[:9]
         now = timezone.now().date()
         one_week_later = now + timedelta(weeks=1)
         context['starting_soon_courses'] = Course.objects.filter(
             start_date__range=[now, one_week_later]
-        ).order_by('start_date')[:8]
+        ).order_by('start_date')[:9]
         return context
 
 
