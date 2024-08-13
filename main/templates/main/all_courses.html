@@ -32,11 +32,14 @@
                 <a href="{% url 'all_courses' %}" class="btn btn-primary">All Courses</a>
             </div>
             <div class="search-box">
-                <label>
-                    <input type="text" placeholder="Search">
-                </label>
-                <i class="fas fa-search"></i>
+                <form method="GET" action="{% url 'all_courses' %}">
+                    <label>
+                        <input type="text" name="search" placeholder="Search" value="{{ request.GET.search|default:'' }}">
+                    </label>
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
             </div>
+
             <div class="logo-center">
                 <a href="{% url 'home' %}">
                     <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo-image">

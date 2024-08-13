@@ -284,6 +284,10 @@ class AllCoursesView(TemplateView):
         start_date = self.request.GET.get('start_date')
         duration = self.request.GET.get('duration')
         modality = self.request.GET.get('modality')
+        search_query = self.request.GET.get('search')  # Capture the search query
+
+        if search_query:
+            courses = courses.filter(name__icontains=search_query)  # Filter courses by name
 
         if subject_area:
             courses = courses.filter(category_id=subject_area)
@@ -333,7 +337,6 @@ class AllCoursesView(TemplateView):
         context['courses'] = page_obj.object_list
         context['subject_areas'] = Category.objects.all()
         return context
-
 
 
 class SignUpView(CreateView):
