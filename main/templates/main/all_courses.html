@@ -129,6 +129,54 @@
             </div>
         </div>
     </section>
+<!-- Filter Summary Section -->
+<section class="filter-summary-section container mt-4">
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-between align-items-center">
+            <div>
+                <p><strong>{{ filters.total_results }} results</strong>
+                {% if filters.search_query %}
+                    for <span class="filter-box">{{ filters.search_query }}</span>
+                {% endif %}
+                {% if filters.subject_area %}
+                    <span class="filter-box">{{ filters.subject_area }}</span>
+                {% endif %}
+                {% if filters.price %}
+                    <span class="filter-box">{{ filters.price|capfirst }}</span>
+                {% endif %}
+                {% if filters.start_date %}
+                    <span class="filter-box">
+                        {% if filters.start_date == '1_week' %}Within 1 week{% endif %}
+                        {% if filters.start_date == '1_month' %}Within 1 month{% endif %}
+                        {% if filters.start_date == '3_months' %}Within 3 months{% endif %}
+                        {% if filters.start_date == '6_months' %}Within 6 months{% endif %}
+                        {% if filters.start_date == '1_year' %}Within 1 year{% endif %}
+                    </span>
+                {% endif %}
+                {% if filters.duration %}
+                    <span class="filter-box">
+                        {% if filters.duration == '0_1' %}0 - 1 week{% endif %}
+                        {% if filters.duration == '1_3' %}1 - 3 weeks{% endif %}
+                        {% if filters.duration == '3_6' %}3 - 6 weeks{% endif %}
+                        {% if filters.duration == '6_9' %}6 - 9 weeks{% endif %}
+                        {% if filters.duration == '9_12' %}9 - 12 weeks{% endif %}
+                        {% if filters.duration == '12_plus' %}12+ weeks{% endif %}
+                    </span>
+                {% endif %}
+                {% if filters.modality %}
+                    <span class="filter-box">{{ filters.modality|capfirst }}</span>
+                {% endif %}
+                </p>
+            </div>
+            <div>
+                {% if filters.search_query or filters.subject_area or filters.price or filters.start_date or filters.duration or filters.modality %}
+                    <a href="{% url 'all_courses' %}" class="btn btn-danger btn-clear-filters">Clear All Filters</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
 
     <!-- Course Cards Section -->
 <section id="courses-section" class="container mt-5">

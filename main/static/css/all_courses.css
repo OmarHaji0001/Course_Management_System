@@ -89,6 +89,37 @@
     color: white; /* Text color on hover */
 }
 
+.filter-summary-section {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.filter-summary-section .filter-box {
+    display: inline-block;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    margin: 0 10px;
+    border-radius: 5px;
+}
+
+.btn-clear-filters {
+    background-color: #900;
+    color: #fff;
+    border: none;
+    padding: 5px 15px;
+    font-size: 1em;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.btn-clear-filters:hover {
+    background-color: #700;
+    color: #fff;
+    text-decoration: none;
+}
+
 /* Card Styling */
 .card {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

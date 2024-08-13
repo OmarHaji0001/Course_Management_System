@@ -284,13 +284,14 @@ class AllCoursesView(TemplateView):
         start_date = self.request.GET.get('start_date')
         duration = self.request.GET.get('duration')
         modality = self.request.GET.get('modality')
-        search_query = self.request.GET.get('search')  # Capture the search query
+        search_query = self.request.GET.get('search')
 
         if search_query:
-            courses = courses.filter(name__icontains=search_query)  # Filter courses by name
+            courses = courses.filter(name__icontains=search_query)
 
         if subject_area:
             courses = courses.filter(category_id=subject_area)
+            context['selected_subject_area'] = Category.objects.get(id=subject_area).name
 
         if price:
             if price == 'free':
@@ -336,6 +337,17 @@ class AllCoursesView(TemplateView):
         context['page_obj'] = page_obj
         context['courses'] = page_obj.object_list
         context['subject_areas'] = Category.objects.all()
+
+        # Collecting filters for display
+        context['filters'] = {
+            'subject_area': context.get('selected_subject_area'),
+            'price': price,
+            'start_date': start_date,
+            'duration': duration,
+            'modality': modality,
+            'search_query': search_query,
+            'total_results': courses.count(),
+        }
         return context
 
 
