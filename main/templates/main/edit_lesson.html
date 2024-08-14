@@ -31,25 +31,29 @@
     <form method="POST">
         {% csrf_token %}
         {% for lesson in lessons %}
-        <div class="lesson-section">
-            <input type="hidden" name="lesson_id_{{ lesson.id }}" value="{{ lesson.id }}">
-            <div class="form-group">
-                <label for="lesson_name_{{ lesson.id }}">Lesson Name:</label>
-                <input type="text" name="name_{{ lesson.id }}" id="lesson_name_{{ lesson.id }}" class="form-control" value="{{ lesson.name }}">
+            <div class="lesson-section">
+                <input type="hidden" name="lesson_id_{{ lesson.id }}" value="{{ lesson.id }}">
+                <div class="form-group">
+                    <label for="lesson_name_{{ lesson.id }}">Lesson Name:</label>
+                    <input type="text" name="name_{{ lesson.id }}" id="lesson_name_{{ lesson.id }}" class="form-control"
+                           value="{{ lesson.name }}">
+                </div>
+                <div class="form-group">
+                    <label for="lesson_description_{{ lesson.id }}">Lesson Description:</label>
+                    <textarea name="description_{{ lesson.id }}" id="lesson_description_{{ lesson.id }}"
+                              class="form-control">{{ lesson.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="lesson_open_date_{{ lesson.id }}">Open Date:</label>
+                    <input type="date" name="open_date_{{ lesson.id }}" id="lesson_open_date_{{ lesson.id }}"
+                           class="form-control" value="{{ lesson.open_date|date:'Y-m-d' }}">
+                </div>
+                <div class="form-group">
+                    <label for="lesson_open_time_{{ lesson.id }}">Open Time:</label>
+                    <input type="time" name="open_time_{{ lesson.id }}" id="lesson_open_time_{{ lesson.id }}"
+                           class="form-control" value="{{ lesson.open_time|time:'H:i' }}">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="lesson_description_{{ lesson.id }}">Lesson Description:</label>
-                <textarea name="description_{{ lesson.id }}" id="lesson_description_{{ lesson.id }}" class="form-control">{{ lesson.description }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="lesson_open_date_{{ lesson.id }}">Open Date:</label>
-                <input type="date" name="open_date_{{ lesson.id }}" id="lesson_open_date_{{ lesson.id }}" class="form-control" value="{{ lesson.open_date|date:'Y-m-d' }}">
-            </div>
-            <div class="form-group">
-                <label for="lesson_open_time_{{ lesson.id }}">Open Time:</label>
-                <input type="time" name="open_time_{{ lesson.id }}" id="lesson_open_time_{{ lesson.id }}" class="form-control" value="{{ lesson.open_time|time:'H:i' }}">
-            </div>
-        </div>
         {% endfor %}
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a href="{% url 'teacher-dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>

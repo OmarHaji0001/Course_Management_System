@@ -23,12 +23,13 @@
     <p>{{ course.description }}</p>
     <p>Open for Registration: {{ course.open_for_registration }}</p>
     {% if course.cover_image %}
-    <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}" style="max-width: 300px;">
+        <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}" style="max-width: 300px;">
     {% endif %}
-<br><br>
+    <br><br>
     <!-- Progress Bar -->
     <div class="progress" style="height: 30px; margin-bottom: 20px;">
-        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}"
+             aria-valuemin="0" aria-valuemax="100">
             {{ progress|floatformat:0 }}% Complete
         </div>
     </div>

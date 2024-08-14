@@ -20,19 +20,22 @@
 </header>
 <main>
     <h3>Course Progress</h3>
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width: {{ progress_percentage }}%;" aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100">{{ progress_percentage|floatformat:2 }}%</div>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width: {{ progress_percentage }}%;"
+             aria-valuenow="{{ progress_percentage }}" aria-valuemin="0"
+             aria-valuemax="100">{{ progress_percentage|floatformat:2 }}%
         </div>
+    </div>
     <h3>Completed Lessons</h3>
     <ul>
         {% for completion in completions %}
-        <li>{{ completion.lesson.name }}</li>
+            <li>{{ completion.lesson.name }}</li>
         {% endfor %}
     </ul>
-     <h3>Course Feedback</h3>
+    <h3>Course Feedback</h3>
     <ul>
         {% for feedback in feedbacks %}
-        <li>{{ feedback.comment }}</li>
+            <li>{{ feedback.comment }}</li>
         {% endfor %}
     </ul>
 </main>

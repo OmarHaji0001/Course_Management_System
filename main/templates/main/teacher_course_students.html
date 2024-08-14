@@ -21,10 +21,11 @@
 <main>
     <ul>
         {% for enrollment in enrollments %}
-        <li>
-            {{ enrollment.user.username }}
-            <a href="{% url 'teacher-student-progress' course.id enrollment.user.id %}" class="btn btn-info btn-sm">View Progress</a>
-        </li>
+            <li>
+                {{ enrollment.user.username }}
+                <a href="{% url 'teacher-student-progress' course.id enrollment.user.id %}" class="btn btn-info btn-sm">View
+                    Progress</a>
+            </li>
         {% endfor %}
     </ul>
 </main>

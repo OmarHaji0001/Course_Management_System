@@ -10,7 +10,7 @@ body {
 
 .top-bar {
     background-color: #fff;
-    color: rgba(0,0,0,0.6);
+    color: rgba(0, 0, 0, 0.6);
     padding: 10px 0;
     width: 100%;
 }
@@ -27,7 +27,7 @@ nav {
 }
 
 .btn-link {
-    color: rgba(0,0,0,0.6);
+    color: rgba(0, 0, 0, 0.6);
     text-decoration: none;
     margin-right: 15px;
     font-weight: bold;

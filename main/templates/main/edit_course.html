@@ -37,7 +37,8 @@
             <div class="input-group">
                 <select name="category" id="id_category" class="form-control">
                     {% for category in categories %}
-                        <option value="{{ category.id }}" {% if category.id == form.category.value %}selected{% endif %}>{{ category.name }}</option>
+                        <option value="{{ category.id }}"
+                                {% if category.id == form.category.value %}selected{% endif %}>{{ category.name }}</option>
                     {% endfor %}
                 </select>
                 <div class="input-group-append">
@@ -51,7 +52,8 @@
         <!-- Tags Input -->
         <div class="form-group">
             <label for="id_tags">Tags (comma-separated):</label>
-            <input type="text" name="tags" id="id_tags" class="form-control" value="{% for tag in form.instance.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+            <input type="text" name="tags" id="id_tags" class="form-control" value="
+                    {% for tag in form.instance.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
         </div>
 
         <!-- Price Input -->
@@ -66,14 +68,15 @@
             {{ form.duration_weeks }}
         </div>
 
-       <div class="form-group">
-    <label for="id_modality">Modality:</label>
-    <select name="modality" id="id_modality" class="form-control">
-        <option value="online" {% if form.modality.value == 'online' %}selected{% endif %}>Online</option>
-        <option value="blended" {% if form.modality.value == 'blended' %}selected{% endif %}>Blended</option>
-        <option value="in_person" {% if form.modality.value == 'in_person' %}selected{% endif %}>In-Person</option>
-    </select>
-</div>
+        <div class="form-group">
+            <label for="id_modality">Modality:</label>
+            <select name="modality" id="id_modality" class="form-control">
+                <option value="online" {% if form.modality.value == 'online' %}selected{% endif %}>Online</option>
+                <option value="blended" {% if form.modality.value == 'blended' %}selected{% endif %}>Blended</option>
+                <option value="in_person" {% if form.modality.value == 'in_person' %}selected{% endif %}>In-Person
+                </option>
+            </select>
+        </div>
 
         <div class="form-group">
             <label for="id_cover_image">Cover Image:</label>
@@ -85,9 +88,10 @@
             {{ form.open_for_registration }}
         </div>
         <div class="form-group">
-    <label for="id_start_date">Start Date:</label>
-    <input type="date" name="start_date" id="id_start_date" class="form-control" value="{{ form.start_date.value|date:'Y-m-d' }}">
-</div>
+            <label for="id_start_date">Start Date:</label>
+            <input type="date" name="start_date" id="id_start_date" class="form-control"
+                   value="{{ form.start_date.value|date:'Y-m-d' }}">
+        </div>
 
 
         <button type="submit" class="btn btn-primary" name="save_course">Save Changes</button>
@@ -95,7 +99,8 @@
 </main>
 
 <!-- Modal for Adding Category -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -126,15 +131,15 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#addCategoryForm').on('submit', function(e) {
+    $(document).ready(function () {
+        $('#addCategoryForm').on('submit', function (e) {
             e.preventDefault();  // Prevent the default form submission
 
             $.ajax({
                 type: $(this).attr('method'),
                 url: $(this).attr('action'),
                 data: $(this).serialize(),
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
                         // Append the new category to the dropdown
                         $('#id_category').append(new Option(response['category_name'], response['category_id']));
@@ -144,7 +149,7 @@
                         alert('There was an error adding the category.');
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('An error occurred. Please try again.');
                 }
             });

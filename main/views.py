@@ -54,7 +54,7 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
         lessons = []
         for lesson in course.lesson_set.all():
             lesson.is_open = lesson.open_date < now.date() or (
-                lesson.open_date == now.date() and lesson.open_time <= now.time())
+                    lesson.open_date == now.date() and lesson.open_time <= now.time())
             lessons.append(lesson)
 
         # Calculate the number of completed lessons
@@ -263,7 +263,8 @@ class HomeView(TemplateView):
         # Filter courses that are open for registration and order them by creation date
         context['categories'] = Category.objects.all()
         context['new_courses'] = Course.objects.filter(open_for_registration=True).order_by('-created_at')[:9]
-        context['featured_courses'] = Course.objects.annotate(enrollment_count=Count('enrollment')).order_by('-enrollment_count')[:9]
+        context['featured_courses'] = Course.objects.annotate(enrollment_count=Count('enrollment')).order_by(
+            '-enrollment_count')[:9]
         now = timezone.now().date()
         one_week_later = now + timedelta(weeks=1)
         context['starting_soon_courses'] = Course.objects.filter(

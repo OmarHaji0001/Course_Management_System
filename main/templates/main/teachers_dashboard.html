@@ -49,33 +49,36 @@
                 </div>
             </div>
         </div>
-         <!-- Tags Input -->
-    <div class="form-group">
-        <label for="id_tags">Tags (comma-separated):</label>
-        <input type="text" name="tags" id="id_tags" class="form-control" placeholder="Enter tags separated by commas">
-    </div>
+        <!-- Tags Input -->
+        <div class="form-group">
+            <label for="id_tags">Tags (comma-separated):</label>
+            <input type="text" name="tags" id="id_tags" class="form-control"
+                   placeholder="Enter tags separated by commas">
+        </div>
 
-    <!-- Price Input -->
-    <div class="form-group">
-        <label for="id_price">Price:</label>
-        <input type="number" step="0.01" name="price" id="id_price" class="form-control" placeholder="Enter course price">
-    </div>
+        <!-- Price Input -->
+        <div class="form-group">
+            <label for="id_price">Price:</label>
+            <input type="number" step="0.01" name="price" id="id_price" class="form-control"
+                   placeholder="Enter course price">
+        </div>
 
-    <!-- Duration in Weeks -->
-    <div class="form-group">
-        <label for="id_duration_weeks">Duration (in weeks):</label>
-        <input type="number" name="duration_weeks" id="id_duration_weeks" class="form-control" placeholder="Enter course duration in weeks">
-    </div>
+        <!-- Duration in Weeks -->
+        <div class="form-group">
+            <label for="id_duration_weeks">Duration (in weeks):</label>
+            <input type="number" name="duration_weeks" id="id_duration_weeks" class="form-control"
+                   placeholder="Enter course duration in weeks">
+        </div>
 
-    <!-- Modality Dropdown -->
-    <div class="form-group">
-        <label for="id_modality">Modality:</label>
-        <select name="modality" id="id_modality" class="form-control">
-            <option value="online">Online</option>
-            <option value="blended">Blended</option>
-            <option value="in_person">In-Person</option>
-        </select>
-    </div>
+        <!-- Modality Dropdown -->
+        <div class="form-group">
+            <label for="id_modality">Modality:</label>
+            <select name="modality" id="id_modality" class="form-control">
+                <option value="online">Online</option>
+                <option value="blended">Blended</option>
+                <option value="in_person">In-Person</option>
+            </select>
+        </div>
         <div class="form-group">
             <label for="id_cover_image">Cover Image:</label>
             {{ course_form.cover_image }}
@@ -85,8 +88,8 @@
             {{ course_form.open_for_registration }}
         </div>
         <div class="form-group">
-        <label for="id_start_date">Start Date:</label>
-        <input type="date" name="start_date" id="id_start_date" class="form-control">
+            <label for="id_start_date">Start Date:</label>
+            <input type="date" name="start_date" id="id_start_date" class="form-control">
         </div>
         <button type="submit" class="btn btn-success">Create Course</button>
     </form>
@@ -95,55 +98,60 @@
     <h3>Courses</h3>
     <ul>
         {% for course in courses %}
-        <li>
-            <h4>{{ course.name }}</h4>
-            {% if course.cover_image %}
-            <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}" style="max-width: 200px;">
-            {% endif %}
-            <p>{{ course.description }}</p>
-            <p>Open for Registration: {{ course.open_for_registration }}</p>
-            <a href="{% url 'course-edit' course.pk %}" class="btn btn-primary btn-sm">Edit Course</a>
-            <a href="{% url 'edit-lessons' course.pk %}" class="btn btn-warning btn-sm">Edit Lessons</a> <!-- New Edit Lessons button -->
-            <a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="confirmDelete({{ course.pk }}, '{{ course.name }}');">Delete</a>
-            <a href="{% url 'teacher-course-students' course.id %}" class="btn btn-info btn-sm">View Students</a>
-            <!-- Add Lesson Form -->
-            <form method="POST" action="{% url 'lesson-create' course.pk %}">
-                {% csrf_token %}
-                <div>
-                    <label for="lesson_name_{{ course.id }}">Lesson Name:</label>
-                    <input type="text" name="name" id="lesson_name_{{ course.id }}" placeholder="Lesson Name">
-                </div>
-                <div>
-                    <label for="lesson_description_{{ course.id }}">Lesson Description:</label>
-                    <textarea name="description" id="lesson_description_{{ course.id }}" placeholder="Lesson Description"></textarea>
-                </div>
-                <div>
-                    <label for="lesson_open_date_{{ course.id }}">Open Date:</label>
-                    <input type="date" name="open_date" id="lesson_open_date_{{ course.id }}">
-                </div>
-                <div>
-                    <label for="lesson_open_time_{{ course.id }}">Open Time:</label>
-                    <input type="time" name="open_time" id="lesson_open_time_{{ course.id }}">
-                </div>
-                <input type="hidden" name="course" value="{{ course.id }}">
-                <button type="submit" class="btn btn-secondary btn-sm">Add Lesson</button>
-            </form>
-            <!-- List of Lessons -->
-            <h5>Lessons</h5>
-            <ul>
-                {% for lesson in course.lesson_set.all %}
-                <li>
-                    <strong>{{ lesson.name }}</strong>: {{ lesson.description }}
-                </li>
-                {% endfor %}
-            </ul>
-        </li>
+            <li>
+                <h4>{{ course.name }}</h4>
+                {% if course.cover_image %}
+                    <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}"
+                         style="max-width: 200px;">
+                {% endif %}
+                <p>{{ course.description }}</p>
+                <p>Open for Registration: {{ course.open_for_registration }}</p>
+                <a href="{% url 'course-edit' course.pk %}" class="btn btn-primary btn-sm">Edit Course</a>
+                <a href="{% url 'edit-lessons' course.pk %}" class="btn btn-warning btn-sm">Edit Lessons</a>
+                <!-- New Edit Lessons button -->
+                <a href="javascript:void(0);" class="btn btn-danger btn-sm"
+                   onclick="confirmDelete({{ course.pk }}, '{{ course.name }}');">Delete</a>
+                <a href="{% url 'teacher-course-students' course.id %}" class="btn btn-info btn-sm">View Students</a>
+                <!-- Add Lesson Form -->
+                <form method="POST" action="{% url 'lesson-create' course.pk %}">
+                    {% csrf_token %}
+                    <div>
+                        <label for="lesson_name_{{ course.id }}">Lesson Name:</label>
+                        <input type="text" name="name" id="lesson_name_{{ course.id }}" placeholder="Lesson Name">
+                    </div>
+                    <div>
+                        <label for="lesson_description_{{ course.id }}">Lesson Description:</label>
+                        <textarea name="description" id="lesson_description_{{ course.id }}"
+                                  placeholder="Lesson Description"></textarea>
+                    </div>
+                    <div>
+                        <label for="lesson_open_date_{{ course.id }}">Open Date:</label>
+                        <input type="date" name="open_date" id="lesson_open_date_{{ course.id }}">
+                    </div>
+                    <div>
+                        <label for="lesson_open_time_{{ course.id }}">Open Time:</label>
+                        <input type="time" name="open_time" id="lesson_open_time_{{ course.id }}">
+                    </div>
+                    <input type="hidden" name="course" value="{{ course.id }}">
+                    <button type="submit" class="btn btn-secondary btn-sm">Add Lesson</button>
+                </form>
+                <!-- List of Lessons -->
+                <h5>Lessons</h5>
+                <ul>
+                    {% for lesson in course.lesson_set.all %}
+                        <li>
+                            <strong>{{ lesson.name }}</strong>: {{ lesson.description }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
         {% endfor %}
     </ul>
 </main>
 
 <!-- Modal for Adding Category -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -173,7 +181,8 @@
     </div>
 </div>
 <!-- Modal for Confirming Delete -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -203,15 +212,15 @@
         $('#deleteModal').modal('show');
     }
 
-     $(document).ready(function() {
-        $('#addCategoryForm').on('submit', function(e) {
+    $(document).ready(function () {
+        $('#addCategoryForm').on('submit', function (e) {
             e.preventDefault();  // Prevent the default form submission
 
             $.ajax({
                 type: $(this).attr('method'),
                 url: $(this).attr('action'),
                 data: $(this).serialize(),
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
                         // Append the new category to the dropdown
                         $('#id_category').append(new Option(response['category_name'], response['category_id']));
@@ -221,7 +230,7 @@
                         alert('There was an error adding the category.');
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('An error occurred. Please try again.');
                 }
             });

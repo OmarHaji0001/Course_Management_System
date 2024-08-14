@@ -26,7 +26,8 @@ urlpatterns = [
     path('lessons/<int:lesson_id>/complete/', mark_lesson_complete, name='mark-lesson-complete'),
     path('courses/<int:course_id>/feedback/', submit_feedback, name='submit-feedback'),
     path('courses/<int:course_id>/students/', teacher_course_students, name='teacher-course-students'),
-    path('courses/<int:course_id>/students/<int:student_id>/', teacher_student_progress, name='teacher-student-progress'),
+    path('courses/<int:course_id>/students/<int:student_id>/', teacher_student_progress,
+         name='teacher-student-progress'),
     path('add-category/', add_category, name='add-category'),
     path('courses/<int:pk>/edit-lessons/', EditLessonsView.as_view(), name='edit-lessons'),
 ]

@@ -20,37 +20,39 @@
 
 <!-- Buttons for All Courses and Enrolled Courses -->
 <div class="course-filter">
-    <a href="{% url 'dashboard' %}" class="btn {% if not filter %}btn-primary{% else %}btn-secondary{% endif %}">All Courses</a>
-    <a href="{% url 'dashboard' %}?filter=enrolled" class="btn {% if filter == 'enrolled' %}btn-primary{% else %}btn-secondary{% endif %}">Enrolled Courses</a>
+    <a href="{% url 'dashboard' %}" class="btn {% if not filter %}btn-primary{% else %}btn-secondary{% endif %}">All
+        Courses</a>
+    <a href="{% url 'dashboard' %}?filter=enrolled"
+       class="btn {% if filter == 'enrolled' %}btn-primary{% else %}btn-secondary{% endif %}">Enrolled Courses</a>
 </div>
 
 <main>
     {% if messages %}
         <div>
             {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
         </div>
     {% endif %}
     <h2>Courses</h2>
     <ul class="course-list">
         {% for course in courses %}
-        <li class="{% if not course.open_for_registration %}gray{% endif %}">
-            <h4><a href="{% url 'course-detail' course.id %}">{{ course.name }}</a></h4>
-            {% if course.cover_image %}
-            <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}">
-            {% endif %}
-            <p>{{ course.description }}</p>
-            <p>Open for Registration: {{ course.open_for_registration }}</p>
-            {% if course.is_enrolled %}
-            <button class="btn btn-secondary" disabled>Enrolled</button>
-            {% else %}
-            <form method="POST" action="{% url 'enroll-in-course' course.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Enroll</button>
-            </form>
-            {% endif %}
-        </li>
+            <li class="{% if not course.open_for_registration %}gray{% endif %}">
+                <h4><a href="{% url 'course-detail' course.id %}">{{ course.name }}</a></h4>
+                {% if course.cover_image %}
+                    <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}">
+                {% endif %}
+                <p>{{ course.description }}</p>
+                <p>Open for Registration: {{ course.open_for_registration }}</p>
+                {% if course.is_enrolled %}
+                    <button class="btn btn-secondary" disabled>Enrolled</button>
+                {% else %}
+                    <form method="POST" action="{% url 'enroll-in-course' course.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Enroll</button>
+                    </form>
+                {% endif %}
+            </li>
         {% endfor %}
     </ul>
 </main>

@@ -10,255 +10,267 @@
     <title>Home</title>
 </head>
 <body>
-   <header class="top-bar">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <a href="{% url 'home' %}">
-                <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo">
-            </a>
-            <nav>
-                <a href="{% url 'login' %}" class="btn btn-link">Sign in</a>
-                <a href="{% url 'register' %}" class="btn btn-custom">Register</a>
-            </nav>
-        </div>
-    </header>
+<header class="top-bar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo">
+        </a>
+        <nav>
+            <a href="{% url 'login' %}" class="btn btn-link">Sign in</a>
+            <a href="{% url 'register' %}" class="btn btn-custom">Register</a>
+        </nav>
+    </div>
+</header>
 
-    <!-- Full-width image section -->
-    <section class="hero-section">
-        <img src="{% static 'images/homeTopPhoto.jpg' %}" alt="Hero Image" class="img-fluid w-100">
-        <div class="menu-icon">
-            <i class="fas fa-bars"></i>
-        </div>
-        <div class="search-box">
-            <label>
-                <input type="text" placeholder="Search">
-            </label>
-            <i class="fas fa-search"></i>
-        </div>
-        <div class="logo-center">
-            <a href="{% url 'home' %}">
-                <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo-image">
-            </a>
-        </div>
+<!-- Full-width image section -->
+<section class="hero-section">
+    <img src="{% static 'images/homeTopPhoto.jpg' %}" alt="Hero Image" class="img-fluid w-100">
+    <div class="menu-icon">
+        <i class="fas fa-bars"></i>
+    </div>
+    <div class="search-box">
+        <label>
+            <input type="text" placeholder="Search">
+        </label>
+        <i class="fas fa-search"></i>
+    </div>
+    <div class="logo-center">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo-image">
+        </a>
+    </div>
 
-        <div class="hero-text">
-            <h1>ALL WE NEED IS A LITTLE LOVE AND KINDNESS</h1>
-            <p>Reaching out is an expression of your strength.</p>
-            <div class="btn-group">
-                <a href="{% url 'all_courses' %}" class="btn btn-primary">All Courses</a>
-                <a href="#" class="btn btn-primary">Online Courses</a>
-                <a href="#" class="btn btn-primary">Free Courses</a>
+    <div class="hero-text">
+        <h1>ALL WE NEED IS A LITTLE LOVE AND KINDNESS</h1>
+        <p>Reaching out is an expression of your strength.</p>
+        <div class="btn-group">
+            <a href="{% url 'all_courses' %}" class="btn btn-primary">All Courses</a>
+            <a href="#" class="btn btn-primary">Online Courses</a>
+            <a href="#" class="btn btn-primary">Free Courses</a>
+        </div>
+    </div>
+</section>
+
+<!-- New Featured Courses Section -->
+<section class="featured-courses mt-5">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <h2>Featured Courses</h2>
+            </div>
+            <div class="col-md-4 text-right">
+                <div class="carousel-controls">
+                    <button class="btn btn-outline-secondary" href="#featuredCourseCarousel" role="button"
+                            data-slide="prev">
+                        &lt; Previous
+                    </button>
+                    <button class="btn btn-outline-secondary" href="#featuredCourseCarousel" role="button"
+                            data-slide="next">
+                        Next &gt;
+                    </button>
+                </div>
             </div>
         </div>
-    </section>
 
-    <!-- New Featured Courses Section -->
-    <section class="featured-courses mt-5">
-        <div class="container">
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <h2>Featured Courses</h2>
-                </div>
-                <div class="col-md-4 text-right">
-                    <div class="carousel-controls">
-                        <button class="btn btn-outline-secondary" href="#featuredCourseCarousel" role="button" data-slide="prev">
-                            &lt; Previous
-                        </button>
-                        <button class="btn btn-outline-secondary" href="#featuredCourseCarousel" role="button" data-slide="next">
-                            Next &gt;
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="featuredCourseCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                <div class="carousel-inner">
-                    {% for course in featured_courses %}
-                        {% if forloop.counter0|divisibleby:3 %}
+        <div id="featuredCourseCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+            <div class="carousel-inner">
+                {% for course in featured_courses %}
+                    {% if forloop.counter0|divisibleby:3 %}
                         <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <div class="row">
-                        {% endif %}
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
-                                         <div class="card-body">
-                                            <div class="card-category-modality">
-                                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
-                                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}</p>
-                                            </div>
-                                            <h5 class="card-title">{{ course.name }}</h5>
-                                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                                            <div class="card-price-duration">
-                                                <p class="card-price">${{ course.price }}</p>
-                                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
-                                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
+                        <div class="row">
+                    {% endif %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
+                        <div class="card-body">
+                            <div class="card-category-modality">
+                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
+                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}
+                                </p>
+                            </div>
+                            <h5 class="card-title">{{ course.name }}</h5>
+                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                            <div class="card-price-duration">
+                                <p class="card-price">${{ course.price }}</p>
+                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
+                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
                             </div>
                         </div>
-                        {% endif %}
-                    {% endfor %}
+                    </div>
                 </div>
+                {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
+                    </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Subject Areas Section -->
-    <section class="subject-areas">
-        <div class="container">
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <h2>Subject Areas</h2>
-                </div>
-                <div class="col-md-4 text-right">
-                    <button class="btn btn-primary all-courses-btn" onclick="window.location.href='{% url 'all_courses' %}'">All Courses</button>
-                </div>
+<!-- Subject Areas Section -->
+<section class="subject-areas">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <h2>Subject Areas</h2>
             </div>
+            <div class="col-md-4 text-right">
+                <button class="btn btn-primary all-courses-btn"
+                        onclick="window.location.href='{% url 'all_courses' %}'">All Courses
+                </button>
+            </div>
+        </div>
 
-            <div class="row">
-                {% for category in categories %}
+        <div class="row">
+            {% for category in categories %}
                 <div class="col-md-3 mb-3">
                     <div class="subject-area d-flex align-items-center">
                         <i class="fas fa-book fa-2x mr-2"></i>
                         <h5 class="mb-0">{{ category.name }}</h5>
                     </div>
                 </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Carousel Section with Header -->
+<section class="featured-courses mt-5">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <h2>New Courses</h2>
+            </div>
+            <div class="col-md-4 text-right">
+                <div class="carousel-controls">
+                    <button class="btn btn-outline-secondary" href="#courseCarousel" role="button" data-slide="prev">
+                        &lt; Previous
+                    </button>
+                    <button class="btn btn-outline-secondary" href="#courseCarousel" role="button" data-slide="next">
+                        Next &gt;
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="courseCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                {% for course in new_courses %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row">
+                    {% endif %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
+                        <div class="card-body">
+                            <div class="card-category-modality">
+                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
+                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}
+                                </p>
+                            </div>
+                            <h5 class="card-title">{{ course.name }}</h5>
+                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                            <div class="card-price-duration">
+                                <p class="card-price">${{ course.price }}</p>
+                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
+                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
+                    </div>
+                    </div>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>
-    </section>
-
-    <!-- Carousel Section with Header -->
-    <section class="featured-courses mt-5">
-        <div class="container">
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <h2>New Courses</h2>
-                </div>
-                <div class="col-md-4 text-right">
-                    <div class="carousel-controls">
-                        <button class="btn btn-outline-secondary" href="#courseCarousel" role="button" data-slide="prev">
-                            &lt; Previous
-                        </button>
-                        <button class="btn btn-outline-secondary" href="#courseCarousel" role="button" data-slide="next">
-                            Next &gt;
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="courseCarousel" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                    {% for course in new_courses %}
-                        {% if forloop.counter0|divisibleby:3 %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <div class="row">
-                        {% endif %}
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
-                                        <div class="card-body">
-                                            <div class="card-category-modality">
-                                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
-                                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}</p>
-                                            </div>
-                                            <h5 class="card-title">{{ course.name }}</h5>
-                                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                                            <div class="card-price-duration">
-                                                <p class="card-price">${{ course.price }}</p>
-                                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
-                                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                        {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
-                            </div>
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Full-Width Follow Our Journey Section -->
-    <section class="journey-section">
-        <div class="journey-content">
-            <a href="https://www.instagram.com/lkwellness_/" target="_blank" class="journey-button">
-                FOLLOW OUR JOURNEY
-            </a>
-            <p class="journey-text">Love & Kindness mental health counselor team offers wellness services and provides complete holistic healing practices designed to enrich the lives of all who enter this space. Our approach to wellness fosters professional development as well as the development of self-confidence, self-care habits, and a strong connection to a sense of purpose and meaning.</p>
-        </div>
-    </section>
-
-    <!-- Starting Soon Section -->
-    <section class="featured-courses mt-5">
-        <div class="container">
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <h2>Starting Soon</h2>
-                </div>
-                <div class="col-md-4 text-right">
-                    <div class="carousel-controls">
-                        <button class="btn btn-outline-secondary" href="#startingSoonCarousel" role="button" data-slide="prev">
-                            &lt; Previous
-                        </button>
-                        <button class="btn btn-outline-secondary" href="#startingSoonCarousel" role="button" data-slide="next">
-                            Next &gt;
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="startingSoonCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                <div class="carousel-inner">
-                    {% for course in starting_soon_courses %}
-                        {% if forloop.counter0|divisibleby:3 %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <div class="row">
-                        {% endif %}
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
-                                        <div class="card-body">
-                                            <div class="card-category-modality">
-                                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
-                                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}</p>
-                                            </div>
-                                            <h5 class="card-title">{{ course.name }}</h5>
-                                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                                            <div class="card-price-duration">
-                                                <p class="card-price">${{ course.price }}</p>
-                                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
-                                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
-                            </div>
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="content">
-        <!-- Add your page content here -->
     </div>
+</section>
 
-    <footer class="footer">
-        <p>&copy; 2024 Love and Kindness LLC. All Rights Reserved.</p>
-    </footer>
+<!-- Full-Width Follow Our Journey Section -->
+<section class="journey-section">
+    <div class="journey-content">
+        <a href="https://www.instagram.com/lkwellness_/" target="_blank" class="journey-button">
+            FOLLOW OUR JOURNEY
+        </a>
+        <p class="journey-text">Love & Kindness mental health counselor team offers wellness services and provides
+            complete holistic healing practices designed to enrich the lives of all who enter this space. Our approach
+            to wellness fosters professional development as well as the development of self-confidence, self-care
+            habits, and a strong connection to a sense of purpose and meaning.</p>
+    </div>
+</section>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Starting Soon Section -->
+<section class="featured-courses mt-5">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <h2>Starting Soon</h2>
+            </div>
+            <div class="col-md-4 text-right">
+                <div class="carousel-controls">
+                    <button class="btn btn-outline-secondary" href="#startingSoonCarousel" role="button"
+                            data-slide="prev">
+                        &lt; Previous
+                    </button>
+                    <button class="btn btn-outline-secondary" href="#startingSoonCarousel" role="button"
+                            data-slide="next">
+                        Next &gt;
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="startingSoonCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+            <div class="carousel-inner">
+                {% for course in starting_soon_courses %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row">
+                    {% endif %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
+                        <div class="card-body">
+                            <div class="card-category-modality">
+                                <p class="card-category"><i class="fas fa-book"></i> {{ course.category.name }}</p>
+                                <p class="card-modality"><i class="fas fa-laptop"></i> {{ course.modality|capfirst }}
+                                </p>
+                            </div>
+                            <h5 class="card-title">{{ course.name }}</h5>
+                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                            <div class="card-price-duration">
+                                <p class="card-price">${{ course.price }}</p>
+                                <p class="card-duration">{{ course.duration_weeks }} weeks long</p>
+                                <p class="card-start-date">Register by {{ course.start_date|date:"M d" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
+                    </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="content">
+    <!-- Add your page content here -->
+</div>
+
+<footer class="footer">
+    <p>&copy; 2024 Love and Kindness LLC. All Rights Reserved.</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
