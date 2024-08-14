@@ -21,8 +21,7 @@
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton">
                         {{ user.username }}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu"
-                         style="background-color: #343a40; color: #ffffff;">
+                    <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
                         <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
                         <div class="dropdown-divider"></div>
                         <form id="logout-form" method="POST" action="{% url 'logout' %}">
@@ -301,7 +300,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
-    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+    document.getElementById('dropdownMenuButton').addEventListener('click', function() {
         document.getElementById('dropdownMenu').classList.toggle('show');
     });
 </script>

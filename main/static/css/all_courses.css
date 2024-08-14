@@ -1,12 +1,15 @@
 @import url('home.css');
 
+.footer{
+    background-color: #1e1e1e;
+}
 .hero-section {
     height: 400px; /* Adjust this value to decrease the space between the hero and cards */
     position: relative;
 }
 
 .btn-primary {
-    background-color: #db8141; /* Adjust color as needed */
+    background-color: #900; /* Adjust color as needed */
     border: none;
     border-radius: 5px;
     padding: 12px 25px;
@@ -15,11 +18,11 @@
 }
 
 .btn-primary:hover {
-    background-color: #ca62a4; /* Adjust color as needed */
+    background-color: #700; /* Adjust color as needed */
 }
 
 .hero-section .hero-bg {
-    background-color: #900; /* Replace with your desired background color */
+    background-color: #1e1e1e; /* Replace with your desired background color */
     width: 100%;
     height: 400px; /* Adjust the height as needed */
     position: relative;
@@ -43,50 +46,15 @@
 }
 
 .filter-bar .form-control {
-    background-color: #34495e; /* Dropdown background color */
+    background-color: #900; /* Dropdown background color */
     color: white; /* Dropdown text color */
     border: none;
     border-radius: 5px; /* Adjust to match your theme */
     padding: 10px;
 }
 
-.filter-bar .form-control option {
-    background-color: #34495e; /* Option background color */
-    color: white; /* Option text color */
-}
-
-.filter-bar .form-control option:hover {
-    background-color: #1abc9c; /* Hover effect for dropdown options */
-}
-
 .row.justify-content-center {
     justify-content: space-between; /* Ensure even spacing between dropdowns */
-}
-
-.dropdown-toggle {
-    background-color: transparent;
-    color: white;
-    border: none;
-    padding: 10px 20px; /* Adjust padding as needed */
-    border-radius: 5px; /* Match the border-radius with your existing buttons */
-}
-
-.dropdown-menu {
-    background-color: #34495e; /* Background color for dropdown */
-    color: white; /* Text color for dropdown items */
-    border: none; /* No border */
-    border-radius: 5px; /* Rounded corners for the dropdown */
-    margin-top: 10px; /* Space between button and dropdown */
-}
-
-.dropdown-menu .dropdown-item {
-    color: white; /* Text color for dropdown items */
-    padding: 10px 20px; /* Add padding for dropdown items */
-}
-
-.dropdown-menu .dropdown-item:hover {
-    background-color: #1abc9c; /* Hover effect for dropdown items */
-    color: white; /* Text color on hover */
 }
 
 .filter-summary-section {
@@ -225,11 +193,16 @@
     border-color: #900;
 }
 
+.pagination .page-item.active .page-link:hover {
+    background-color: #700;
+    border-color: #700;
+}
+
 .pagination .page-link {
-    color: #900;
+    color: black;
 }
 
 .pagination .page-link:hover {
-    color: #841626;
-    background-color: #f0f0f0;
+    color: white;
+    background-color: #700;
 }

@@ -376,3 +376,64 @@ h2 {
     width: 100%;
     margin-top: 80px;
 }
+
+/* Basic Dropdown Toggle Styling */
+.dropdown-toggle {
+    background-color: #900;
+    border: none;
+    padding: 10px 20px; /* Adjust padding as needed */
+    border-radius: 5px; /* Match the border-radius with your existing buttons */
+    color: white; /* Ensure the text is white */
+}
+
+/* Hover Effect for Dropdown Toggle */
+.dropdown-toggle:hover {
+    background-color: #700 !important;
+    color: white !important;
+}
+
+/* Focus State for Dropdown Toggle */
+.dropdown-toggle:focus {
+    background-color: #900; /* Maintain the original color */
+    color: white; /* Ensure text remains visible */
+}
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+    background-color: #900; /* Background color for dropdown menu */
+    border-radius: 5px; /* Match with your button's border-radius */
+    border: none; /* Remove any border */
+}
+
+/* Arrow after Dropdown Menu */
+.dropdown-menu:after {
+    background-color: #700; /* Adjust to match your dropdown hover color */
+}
+
+/* Dropdown Item Styling */
+.dropdown-menu .dropdown-item {
+    background-color: #900;
+    color: white; /* Text color for dropdown items */
+    padding: 10px 20px; /* Add padding for dropdown items */
+}
+
+/* Hover and Focus Effect for Dropdown Items */
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus {
+    background-color: #700; /* Hover effect for dropdown items */
+    color: white !important; /* Ensure the text remains white */
+}
+
+/* Ensuring Dropdown Toggle and Items Don't Turn Gray */
+.dropdown-menu .dropdown-item:hover,
+.dropdown-toggle:hover,
+.dropdown-toggle:focus {
+    background-color: #700 !important; /* Hover and focus effect for both dropdown toggle and items */
+    color: white !important; /* Ensure the text color is consistent */
+}
+
+/* Additional Style for Dropdown Menu Open State */
+.dropdown-menu.show {
+    background-color: #900; /* Keep the background color consistent when open */
+    color: white !important; /* Ensure text remains white */
+}

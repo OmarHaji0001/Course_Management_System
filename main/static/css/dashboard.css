@@ -15,7 +15,7 @@
 
 /* Highlight active menu item */
 .dropdown-item.active {
-    background-color: #900 !important;
+    background-color: #700 !important;
     color: white;
 }
 
