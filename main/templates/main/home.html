@@ -8,17 +8,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <title>Home</title>
-</head>
 <body>
 <header class="top-bar">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <a href="{% url 'home' %}">
-            <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo">
+            <img src="{% static 'images/LKWLogo.png' %}" alt="LK Wellness Logo" class="logo">
         </a>
-        <nav>
-            <a href="{% url 'login' %}" class="btn btn-link">Sign in</a>
-            <a href="{% url 'register' %}" class="btn btn-custom">Register</a>
-        </nav>
+        <div class="d-flex align-items-center">
+            {% if user.is_authenticated %}
+                <div class="dropdown ml-3">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton">
+                        {{ user.username }}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
+                        <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                        <div class="dropdown-divider"></div>
+                        <form id="logout-form" method="POST" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-custom">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-custom ml-2">Register</a>
+            {% endif %}
+        </div>
     </div>
 </header>
 
@@ -272,5 +287,11 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    // Toggle dropdown on button click
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
 </body>
 </html>
