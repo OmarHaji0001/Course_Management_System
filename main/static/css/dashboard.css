@@ -8,17 +8,15 @@
     padding: 20px;
 }
 
-.course-link {
-    text-decoration: none;
-    color: inherit; /* Maintain text color */
+/* Dropdown custom styles */
+.dropdown-menu.show {
+    display: block;
 }
 
-.course-link:hover {
-    text-decoration: none;  /* Ensure underline does not appear on hover */
-}
-
-.course-link:hover .course-card {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle hover effect */
+/* Highlight active menu item */
+.dropdown-item.active {
+    background-color: #900 !important;
+    color: white;
 }
 
 /* Enrolled Courses Section Container */
@@ -28,6 +26,7 @@
     border-radius: 8px;
     margin-bottom: 20px;
     margin-right: 40px;
+    margin-left: 10px;
 }
 
 /* Individual course card */
@@ -38,6 +37,11 @@
     margin-bottom: 20px;
     padding: 15px;
     background-color: white;
+    cursor: pointer; /* Make the entire card clickable */
+}
+
+.course-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add hover effect */
 }
 
 .course-photo {
@@ -47,7 +51,7 @@
 }
 
 .course-info {
-    flex: 1; /* Allow this div to take the full remaining width */
+    flex: 1;
 }
 
 .course-info h4 {
@@ -61,17 +65,15 @@
     color: #555;
 }
 
-/* Adjust progress bar to span the full width */
 .progress {
     height: 20px;
     width: 100%;
     background-color: #f0f0f0;
     border-radius: 5px;
-    margin-top: 10px;
 }
 
 .progress-bar {
-    background-color: #900;
+    background-color: #900 !important;
     height: 100%;
     border-radius: 5px;
 }
@@ -81,6 +83,7 @@
     background-color: #f0f0f0; /* Slightly darker gray for contrast */
     padding: 20px;
     border-radius: 8px;
+    margin-left: 40px;
 }
 
 /* Featured course card */
@@ -109,7 +112,7 @@
 /* Button styles */
 .btn-custom {
     background-color: #900 !important; /* Force the background color */
-    color: white !important;           /* Force the text color */
+    color: white !important; /* Force the text color */
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -122,6 +125,12 @@
 }
 
 .btn-custom:hover {
-    background-color: #841626 !important; /* Force the hover background color */
-    text-decoration: none !important;     /* Prevent underline on hover */
+    background-color: #700 !important; /* Force the hover background color */
+    text-decoration: none !important; /* Prevent underline on hover */
+}
+
+/* Top bar underline */
+.top-bar {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
 }

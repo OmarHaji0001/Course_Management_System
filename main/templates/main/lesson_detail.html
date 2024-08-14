@@ -4,42 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/lesson_detail.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <title>{{ lesson.name }} - Details</title>
 </head>
 <body>
-<header>
-    <h1>{{ lesson.name }} - Details</h1>
-    <nav>
-        <form id="logout-form" method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    </nav>
+<header class="top-bar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'images/LKWLogo.png' %}" alt="LK Wellness Logo" class="logo">
+        </a>
+        <div class="d-flex align-items-center">
+            <a href="{% url 'all_courses' %}" class="btn btn-custom">All Courses</a>
+            <div class="dropdown ml-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton">
+                    {{ user.username }}
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
+                    <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                    <div class="dropdown-divider"></div>
+                    <form id="logout-form" method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </header>
-<main>
-    <p><strong>Open date:</strong> {{ lesson.open_date }}</p>
-    <p><strong>Open time:</strong> {{ lesson.open_time }}</p>
-    <p>{{ lesson.description }}</p>
 
-    {% if is_last_lesson %}
-        <h3>Course Feedback</h3>
-        <form method="POST" action="{% url 'submit-feedback' course_id %}">
-            {% csrf_token %}
-            {{ feedback_form.as_p }}
-            <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
-        </form>
-    {% endif %}
+<main class="container mt-5">
+    <div class="row">
+        <!-- Lesson Details Section -->
+        <div class="{% if not is_last_lesson %}col-md-12{% else %}col-md-8{% endif %} lesson-details">
+            <h2>{{ lesson.name }} - Details</h2>
+            <p><strong>Open date:</strong> {{ lesson.open_date }}</p>
+            <p><strong>Open time:</strong> {{ lesson.open_time }}</p>
+            <div class="lesson-description">
+                {{ lesson.description|linebreaks }}
+            </div>
 
+            <h3>Completion</h3>
+            <form method="POST" action="{% url 'mark-lesson-complete' lesson.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success" {% if completion %}disabled{% endif %}>
+                    {% if completion %}Completed{% else %}Mark as Complete{% endif %}
+                </button>
+            </form>
+        </div>
 
-    <h3>Completion</h3>
-    <form method="POST" action="{% url 'mark-lesson-complete' lesson.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-success" {% if completion %}disabled{% endif %}>
-            {% if completion %}Completed{% else %}Mark as Complete{% endif %}
-        </button>
-    </form>
+        <!-- Course Feedback Section -->
+        {% if is_last_lesson %}
+        <div class="col-md-4 course-feedback visible">
+            <h3>Course Feedback</h3>
+            <form method="POST" action="{% url 'submit-feedback' course_id %}">
+                {% csrf_token %}
+                {{ feedback_form.as_p }}
+                <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
 </main>
+
+<footer class="footer mt-5">
+    <p>&copy; 2024 Love and Kindness LLC. All Rights Reserved.</p>
+</footer>
+
+<!-- Make sure these scripts are at the bottom of the page -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Ensure the dropdown menu opens on click
+    document.getElementById('dropdownMenuButton').addEventListener('click', function() {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
 </body>
 </html>

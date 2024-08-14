@@ -1,0 +1,30 @@
+@import url('dashboard.css');
+
+/* Styling for the lesson details section */
+.lesson-details {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Limit the height of the lesson description and make it scrollable */
+.lesson-description {
+    max-height: 300px; /* Set a maximum height */
+    overflow-y: auto;  /* Enable vertical scrolling if content exceeds max height */
+    padding-right: 10px; /* Add padding to the right for a better look with scroll */
+}
+
+/* Styling for the course feedback section */
+.course-feedback {
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 10px;
+    position: sticky;
+    top: 20px; /* Make it sticky, so it stays visible as the user scrolls */
+    display: none; /* Hide by default */
+}
+
+.course-feedback.visible {
+    display: block; /* Only show if it's the last lesson */
+}

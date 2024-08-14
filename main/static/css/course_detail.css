@@ -1,0 +1,29 @@
+@import url('dashboard.css');
+
+/* Add any additional styling for the course detail page here */
+
+/* Example */
+.course-details {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.course-details h2 {
+    color: #900;
+    font-size: 2em;
+}
+
+.course-details ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.course-details ul li {
+    margin-bottom: 10px;
+}
+
+.course-details ul li.gray span {
+    color: gray;
+    cursor: not-allowed;
+}
