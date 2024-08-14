@@ -8,6 +8,19 @@
     padding: 20px;
 }
 
+.course-link {
+    text-decoration: none;
+    color: inherit; /* Maintain text color */
+}
+
+.course-link:hover {
+    text-decoration: none;  /* Ensure underline does not appear on hover */
+}
+
+.course-link:hover .course-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle hover effect */
+}
+
 /* Enrolled Courses Section Container */
 .enrolled-courses-container {
     background-color: #f9f9f9; /* Light gray background color */

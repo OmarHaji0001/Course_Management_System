@@ -41,20 +41,22 @@
         <div class="col-md-7 enrolled-courses-container">
             <h2>My Enrolled Courses</h2>
             {% for course in enrolled_courses %}
-            <div class="course-card">
-                <img src="{{ course.cover_image.url }}" alt="Course Photo" class="course-photo">
-                <div class="course-info">
-                    <h4>{{ course.name }}</h4>
-                    {% if course.end_date %}
-                        <p>Ending at: {{ course.end_date }}</p>
-                    {% else %}
-                        <p>End date not available</p>
-                    {% endif %}
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: {{ course.progress }}%;" aria-valuenow="{{ course.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+            <a href="{% url 'course-detail' course.id %}" class="course-link">
+                <div class="course-card">
+                    <img src="{{ course.cover_image.url }}" alt="Course Photo" class="course-photo">
+                    <div class="course-info">
+                        <h4>{{ course.name }}</h4>
+                        {% if course.end_date %}
+                            <p>Ending at: {{ course.end_date }}</p>
+                        {% else %}
+                            <p>End date not available</p>
+                        {% endif %}
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ course.progress }}%;" aria-valuenow="{{ course.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
 
