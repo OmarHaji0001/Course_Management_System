@@ -380,19 +380,28 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        filter_type = self.request.GET.get('filter', '')
 
-        if filter_type == 'enrolled':
-            enrolled_courses = Enrollment.objects.filter(user=user).values_list('course_id', flat=True)
-            courses = Course.objects.filter(id__in=enrolled_courses)
-        else:
-            courses = Course.objects.all()
+        # Get the enrolled courses for the logged-in user
+        enrolled_courses = Course.objects.filter(enrollment__user=user)
 
-        for course in courses:
-            course.is_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
+        # Calculate progress and end date for each course
+        for course in enrolled_courses:
+            total_lessons = course.lesson_set.count()
+            completed_lessons = Completion.objects.filter(student=user, lesson__course=course).count()
+            course.progress = (completed_lessons / total_lessons) * 100 if total_lessons > 0 else 0
 
-        context['courses'] = courses
-        context['filter'] = filter_type
+            # Calculate the end date
+            if course.start_date and course.duration_weeks:
+                course.end_date = course.start_date + timedelta(weeks=course.duration_weeks)
+            else:
+                course.end_date = None  # Handle cases where the start date or duration is missing
+
+        context['enrolled_courses'] = enrolled_courses
+
+        # Fetch the featured courses (limit to 5)
+        context['featured_courses'] = Course.objects.annotate(enrollment_count=Count('enrollment')).order_by(
+            '-enrollment_count')[:5]
+
         return context
 
 
