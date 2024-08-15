@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <title>Students Dashboard</title>
 </head>
 <body>
@@ -22,7 +23,8 @@
                     {{ user.username }}
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
-                    <a class="dropdown-item {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">Dashboard</a>
+                    <a class="dropdown-item {% if request.path == '/dashboard/' %}active{% endif %}"
+                       href="{% url 'dashboard' %}">Dashboard</a>
                     <div class="dropdown-divider"></div>
                     <form id="logout-form" method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
@@ -40,20 +42,21 @@
         <div class="col-md-7 enrolled-courses-container">
             <h2>My Enrolled Courses</h2>
             {% for course in enrolled_courses %}
-            <div class="course-card" onclick="window.location.href='{% url 'course-detail' course.id %}'">
-                <img src="{{ course.cover_image.url }}" alt="Course Photo" class="course-photo">
-                <div class="course-info">
-                    <h4>{{ course.name }}</h4>
-                    {% if course.end_date %}
-                        <p>Ending at: {{ course.end_date }}</p>
-                    {% else %}
-                        <p>End date not available</p>
-                    {% endif %}
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: {{ course.progress }}%;" aria-valuenow="{{ course.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="course-card" onclick="window.location.href='{% url 'course-detail' course.id %}'" data-aos="fade-up">
+                    <img src="{{ course.cover_image.url }}" alt="Course Photo" class="course-photo">
+                    <div class="course-info">
+                        <h4>{{ course.name }}</h4>
+                        {% if course.end_date %}
+                            <p>Ending at: {{ course.end_date }}</p>
+                        {% else %}
+                            <p>End date not available</p>
+                        {% endif %}
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ course.progress }}%;"
+                                 aria-valuenow="{{ course.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
             {% endfor %}
         </div>
 
@@ -61,12 +64,12 @@
         <div class="col-md-4 featured-courses-container">
             <h3>Featured Courses</h3>
             {% for course in featured_courses %}
-            <div class="featured-course">
-                <img src="{{ course.cover_image.url }}" alt="Course Photo" class="course-photo">
-                <div class="course-info">
-                    <p>{{ course.name }}</p>
+                <div class="featured-course" data-aos="fade-up">
+                    <img src="{{ course.cover_image.url }}" alt="Course Photo" class="course-photo">
+                    <div class="course-info">
+                        <p>{{ course.name }}</p>
+                    </div>
                 </div>
-            </div>
             {% endfor %}
             <a href="{% url 'all_courses' %}" class="btn btn-custom mt-3">See all courses</a>
         </div>
@@ -80,9 +83,14 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
     // Toggle dropdown on button click
-    document.getElementById('dropdownMenuButton').addEventListener('click', function() {
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
         document.getElementById('dropdownMenu').classList.toggle('show');
     });
 </script>

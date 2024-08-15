@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/course_detail.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <title>{{ course.name }} - Details</title>
 </head>
 <body>
@@ -22,7 +23,8 @@
                     {{ user.username }}
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
-                    <a class="dropdown-item {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">Dashboard</a>
+                    <a class="dropdown-item {% if request.path == '/dashboard/' %}active{% endif %}"
+                       href="{% url 'dashboard' %}">Dashboard</a>
                     <div class="dropdown-divider"></div>
                     <form id="logout-form" method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
@@ -40,12 +42,12 @@
         <p>{{ course.description }}</p>
         <p>Open for Registration: {{ course.open_for_registration }}</p>
         {% if course.cover_image %}
-            <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}" style="max-width: 300px;">
+            <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}" style="max-width: 300px;" data-aos="fade-right">
         {% endif %}
         <br><br>
 
         <!-- Progress Bar -->
-        <div class="progress" style="height: 30px; margin-bottom: 20px;">
+        <div class="progress" style="height: 30px; margin-bottom: 20px;" data-aos="fade-right">
             <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}"
                  aria-valuemin="0" aria-valuemax="100">
                 {{ progress|floatformat:0 }}% Complete
@@ -77,10 +79,14 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
     // Ensure the dropdown menu opens on click
-    document.getElementById('dropdownMenuButton').addEventListener('click', function() {
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
         document.getElementById('dropdownMenu').classList.toggle('show');
     });
 </script>
