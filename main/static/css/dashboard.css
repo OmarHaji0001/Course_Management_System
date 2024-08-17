@@ -1,22 +1,9 @@
-@import url('home.css');
-
 /* General container styles for the dashboard */
 .container {
     flex: 1;
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-}
-
-/* Dropdown custom styles */
-.dropdown-menu.show {
-    display: block;
-}
-
-/* Highlight active menu item */
-.dropdown-item.active {
-    background-color: #700 !important;
-    color: white;
 }
 
 /* Enrolled Courses Section Container */
@@ -127,10 +114,4 @@
 .btn-custom:hover {
     background-color: #700 !important; /* Force the hover background color */
     text-decoration: none !important; /* Prevent underline on hover */
-}
-
-/* Top bar underline */
-.top-bar {
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
 }

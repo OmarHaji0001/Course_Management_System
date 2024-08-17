@@ -6,37 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/top_bar_HA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
     <link rel="stylesheet" href="{% static 'css/all_courses.css' %}">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <title>All Courses</title>
 </head>
 <body>
 <header class="top-bar">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-        <a href="{% url 'home' %}">
-            <img src="{% static 'images/LKWLogo.png' %}" alt="LK Wellness Logo" class="logo">
-        </a>
-        <div class="d-flex align-items-center">
-            {% if user.is_authenticated %}
-                <div class="dropdown ml-3">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton">
-                        {{ user.username }}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
-                        <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
-                        <div class="dropdown-divider"></div>
-                        <form id="logout-form" method="POST" action="{% url 'logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="dropdown-item">Logout</button>
-                        </form>
-                    </div>
-                </div>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn btn-custom">Login</a>
-                <a href="{% url 'register' %}" class="btn btn-custom ml-2">Register</a>
-            {% endif %}
-        </div>
-    </div>
+    {% include 'main/top_bar_HA.html' %}
 </header>
 
 <!-- Hero Section with Background Color -->
@@ -172,7 +150,7 @@
                         </div>
 
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary mt-4">Filter</button>
+                            <button type="submit" class="btn btn-primary-filter mt-4">Filter</button>
                         </div>
                     </div>
                 </form>
@@ -329,9 +307,8 @@
     </div>
 </section>
 
-<footer class="footer">
-    <p>&copy; 2024 Love and Kindness LLC. All Rights Reserved.</p>
-</footer>
+{% include 'main/footer_HA.html' %}
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

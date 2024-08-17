@@ -1,0 +1,55 @@
+.top-bar {
+    background-color: #fff;
+    color: rgba(0, 0, 0, 0.6);
+    padding: 10px 0;
+    width: 100%;
+    border-bottom: 1px solid #ddd; /* Adding a subtle bottom border */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    max-height: 70px;
+    padding-left: 60px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    padding-right: 40px;
+}
+
+.btn-custom {
+    background-color: #db8141;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn-custom:hover {
+    background-color: #ca62a4;
+    color: white;
+}
+
+/* Dropdown custom styles */
+.dropdown-menu {
+    background-color: #900; /* Background color for dropdown menu */
+    color: white;
+    border-radius: 5px; /* Match with your button's border-radius */
+    border: none; /* Remove any border */
+}
+
+.dropdown-item.active {
+    background-color: #700 !important;
+    color: white;
+}
+
+.dropdown-item:hover {
+    background-color: #700;
+    color: white;
+}
+.dropdown-menu .dropdown-item {
+    color: white; /* Text color for dropdown items */
+    padding: 10px 20px; /* Add padding for dropdown items */
+}

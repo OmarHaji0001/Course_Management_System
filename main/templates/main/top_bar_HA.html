@@ -1,0 +1,26 @@
+{% load static %}
+<div class="container-fluid d-flex justify-content-between align-items-center">
+    <a href="{% url 'home' %}">
+        <img src="{% static 'images/LKWLogo.png' %}" alt="LK Wellness Logo" class="logo">
+    </a>
+    <div class="d-flex align-items-center">
+        {% if user.is_authenticated %}
+            <div class="dropdown ml-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton">
+                    {{ user.username }}
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
+                    <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                    <div class="dropdown-divider"></div>
+                    <form id="logout-form" method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item">Logout</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-custom">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-custom ml-2">Register</a>
+        {% endif %}
+    </div>
+</div>
