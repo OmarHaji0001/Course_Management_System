@@ -95,23 +95,3 @@
     font-size: 1em;
     color: #333;
 }
-
-/* Button styles */
-.btn-custom {
-    background-color: #900 !important; /* Force the background color */
-    color: white !important; /* Force the text color */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1.1em;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-}
-
-.btn-custom:hover {
-    background-color: #700 !important; /* Force the hover background color */
-    text-decoration: none !important; /* Prevent underline on hover */
-}

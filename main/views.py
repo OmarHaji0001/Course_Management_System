@@ -80,34 +80,29 @@ class CourseUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'main/edit_course.html'
     success_url = reverse_lazy('teacher-dashboard')
 
+    def get_initial(self):
+        initial = super().get_initial()
+        course = self.get_object()
+        initial['tags'] = ', '.join([tag.name for tag in course.tags.all()])
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()  # Pass categories to the template
+        context['categories'] = Category.objects.all()
         return context
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
-            response = self.form_valid(form)
+    def form_valid(self, form):
+        # Handle tags
+        tags_input = form.cleaned_data.get('tags', '')
+        if tags_input:
+            tags_list = [tag.strip() for tag in tags_input.split(',')]
+            form.instance.tags.clear()  # Clear existing tags
+            for tag_name in tags_list:
+                tag, created = Tag.objects.get_or_create(name=tag_name)
+                form.instance.tags.add(tag)
 
-            # Handle tags
-            tags_input = form.cleaned_data.get('tags', '')
-            if tags_input:
-                tags_list = [tag.strip() for tag in tags_input.split(',')]
-                self.object.tags.clear()  # Clear existing tags
-                for tag_name in tags_list:
-                    tag, created = Tag.objects.get_or_create(name=tag_name)
-                    self.object.tags.add(tag)
-
-            # Handle start date
-            self.object.start_date = form.cleaned_data['start_date']
-            self.object.save()
-
-            return response
-        else:
-            return self.form_invalid(form)
-
+        # Save the course with the updated information
+        return super().form_valid(form)
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseDeleteView(LoginRequiredMixin, DeleteView):
@@ -209,6 +204,9 @@ def teacher_student_progress(request, course_id, student_id):
 
 @login_required
 def teacher_dashboard(request):
+    teacher = request.user
+    courses = Course.objects.filter(teacher=teacher)  # Only fetch courses created by the logged-in teacher
+
     if request.method == 'POST':
         if 'category_name' in request.POST:
             category_form = CategoryForm(request.POST)
@@ -219,7 +217,10 @@ def teacher_dashboard(request):
         else:
             course_form = CourseForm(request.POST, request.FILES)
             if course_form.is_valid():
-                course_form.save()
+                # Assign the logged-in teacher as the creator of the course
+                course = course_form.save(commit=False)
+                course.teacher = teacher
+                course.save()
                 return redirect('teacher-dashboard')
             category_form = CategoryForm()  # Ensure category_form is initialized if course is created
     else:
@@ -227,12 +228,12 @@ def teacher_dashboard(request):
         category_form = CategoryForm()
 
     categories = Category.objects.all()
-    courses = Course.objects.all()
+
     return render(request, 'main/teachers_dashboard.html', {
         'course_form': course_form,
         'category_form': category_form,
         'categories': categories,
-        'courses': courses
+        'courses': courses  # Pass the filtered courses to the template
     })
 
 

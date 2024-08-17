@@ -37,6 +37,7 @@ class Course(models.Model):
         ('blended', 'Blended'),
         ('in_person', 'In-Person'),
     ]
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses', default=1)
     name = models.CharField(max_length=100)
     description = models.TextField()
     cover_image = models.ImageField(upload_to='course_images/', null=True, blank=True)

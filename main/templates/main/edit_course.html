@@ -1,102 +1,113 @@
+{% load crispy_forms_filters %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Course</title>
+    <link rel="stylesheet" href="{% static 'css/edit_course.css' %}">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/TD.css' %}">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <title>Edit Course</title>
 </head>
 <body>
-<header>
-    <h1>Edit Course</h1>
-    <nav>
-        <form id="logout-form" method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Logout</button>
-        </form>
-    </nav>
+<header class="top-bar">
+    {% include 'main/top_bar_STA.html' %}
 </header>
-<main>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_name">Course Name:</label>
-            {{ form.name }}
-        </div>
-        <div class="form-group">
-            <label for="id_description">Course Description:</label>
-            {{ form.description }}
-        </div>
-        <div class="form-group">
-            <label for="id_category">Category:</label>
-            <div class="input-group">
-                <select name="category" id="id_category" class="form-control">
-                    {% for category in categories %}
-                        <option value="{{ category.id }}"
-                                {% if category.id == form.category.value %}selected{% endif %}>{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">
-                        Add Category
-                    </button>
-                </div>
-            </div>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            {% include 'main/sidebar.html' %}
         </div>
 
-        <!-- Tags Input -->
-        <div class="form-group">
-            <label for="id_tags">Tags (comma-separated):</label>
-            <input type="text" name="tags" id="id_tags" class="form-control" value="
-                    {% for tag in form.instance.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
-        </div>
+        <!-- Main content -->
+        <div class="col-md-10">
+            <h2>Edit Course</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
 
-        <!-- Price Input -->
-        <div class="form-group">
-            <label for="id_price">Price:</label>
-            {{ form.price }}
-        </div>
+                <!-- Display form errors if any -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
 
-        <!-- Duration in Weeks -->
-        <div class="form-group">
-            <label for="id_duration_weeks">Duration (in weeks):</label>
-            {{ form.duration_weeks }}
-        </div>
+                <!-- Course Details -->
+                <fieldset class="mb-4">
+                    <legend>Course Details</legend>
+                    <div class="form-group">
+                        {{ form.name|as_crispy_field }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.description|as_crispy_field }}
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            {{ form.category }}
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#addCategoryModal">
+                                    Add Category
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.tags|as_crispy_field }}
+                    </div>
+                </fieldset>
 
-        <div class="form-group">
-            <label for="id_modality">Modality:</label>
-            <select name="modality" id="id_modality" class="form-control">
-                <option value="online" {% if form.modality.value == 'online' %}selected{% endif %}>Online</option>
-                <option value="blended" {% if form.modality.value == 'blended' %}selected{% endif %}>Blended</option>
-                <option value="in_person" {% if form.modality.value == 'in_person' %}selected{% endif %}>In-Person
-                </option>
-            </select>
-        </div>
+                <!-- Pricing and Schedule -->
+                <fieldset class="mb-4">
+                    <legend>Pricing and Schedule</legend>
+                    <div class="form-group">
+                        {{ form.price|as_crispy_field }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.duration_weeks|as_crispy_field }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_start_date">Start Date:</label>
+                        <input type="date" name="start_date" id="id_start_date" class="form-control"
+                               value="{{ form.start_date.value|date:'Y-m-d' }}">
+                    </div>
 
-        <div class="form-group">
-            <label for="id_cover_image">Cover Image:</label>
-            {{ form.cover_image }}
-        </div>
+                    <div class="form-group">
+                        {{ form.modality|as_crispy_field }}
+                    </div>
+                </fieldset>
 
-        <div class="form-group">
-            <label for="id_open_for_registration">Open for Registration:</label>
-            {{ form.open_for_registration }}
-        </div>
-        <div class="form-group">
-            <label for="id_start_date">Start Date:</label>
-            <input type="date" name="start_date" id="id_start_date" class="form-control"
-                   value="{{ form.start_date.value|date:'Y-m-d' }}">
-        </div>
+                <!-- Image and Registration -->
+                <fieldset class="mb-4">
+                    <legend>Image and Registration</legend>
+                    <div class="form-group">
+                        {% if course.cover_image %}
+                            <div class="mb-2">
+                                <img src="{{ course.cover_image.url }}" alt="Current Cover Image" class="img-fluid">
+                            </div>
+                        {% endif %}
+                        {{ form.cover_image|as_crispy_field }}
+                    </div>
 
+                    <div class="form-group">
+                        {{ form.open_for_registration|as_crispy_field }}
+                    </div>
+                </fieldset>
 
-        <button type="submit" class="btn btn-primary" name="save_course">Save Changes</button>
-    </form>
-</main>
+                <button type="submit" class="btn btn-primary" name="save_course">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'main/footer_HA.html' %}
 
 <!-- Modal for Adding Category -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
@@ -122,7 +133,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Add Category</button>
+                    <button type="submit" class="btn btn-primary">Add Category</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </form>
@@ -130,7 +141,18 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
     $(document).ready(function () {
         $('#addCategoryForm').on('submit', function (e) {
             e.preventDefault();  // Prevent the default form submission

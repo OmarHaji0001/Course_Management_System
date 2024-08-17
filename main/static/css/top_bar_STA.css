@@ -12,18 +12,24 @@
     padding-left: 60px;
 }
 
+/* Button styles */
 .btn-custom {
-    background-color: #db8141;
-    color: white;
+    background-color: #900 !important; /* Force the background color */
+    color: white !important; /* Force the text color */
     border: none;
-    padding: 8px 15px;
+    padding: 10px 20px;
     border-radius: 5px;
+    font-size: 1.1em;
     font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
 }
 
 .btn-custom:hover {
-    background-color: #ca62a4;
-    color: white;
+    background-color: #700 !important; /* Force the hover background color */
+    text-decoration: none !important; /* Prevent underline on hover */
 }
 
 /* Dropdown custom styles */

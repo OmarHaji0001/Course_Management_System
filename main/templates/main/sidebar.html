@@ -1,0 +1,12 @@
+<nav class="nav flex-column">
+    <a class="nav-link active" href="{% url 'teacher-dashboard' %}">Dashboard</a>
+    <a class="nav-link" href="{% url 'home' %}">Home Page</a>
+    <a class="nav-link" href="{% url 'course-create' %}">Create a Course</a>
+    <a class="nav-link" href="#">Manage Account</a>
+
+    <!-- Logout form -->
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="nav-link btn btn-link p-0" style="margin-top: 30px">Logout</button>
+    </form>
+</nav>

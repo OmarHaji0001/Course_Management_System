@@ -4,239 +4,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teachers Dashboard</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/TD.css' %}">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Teacher Dashboard</title>
 </head>
 <body>
-<header>
-    <h1>Teachers Dashboard</h1>
-    <nav>
-        <form id="logout-form" method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Logout</button>
-        </form>
-    </nav>
+<header class="top-bar">
+    {% include 'main/top_bar_STA.html' %}
 </header>
-<main>
-    <h2>Course Management</h2>
-    <!-- Create Course Form -->
-    <form method="POST" action="{% url 'course-create' %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_name">Course Name:</label>
-            {{ course_form.name }}
-        </div>
-        <div class="form-group">
-            <label for="id_description">Course Description:</label>
-            {{ course_form.description }}
-        </div>
-        <div class="form-group">
-            <label for="id_category">Category:</label>
-            <div class="input-group">
-                <select name="category" id="id_category" class="form-control">
-                    {% for category in categories %}
-                        <option value="{{ category.id }}">{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">
-                        Add Category
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Tags Input -->
-        <div class="form-group">
-            <label for="id_tags">Tags (comma-separated):</label>
-            <input type="text" name="tags" id="id_tags" class="form-control"
-                   placeholder="Enter tags separated by commas">
+
+<div class="container-fluid mt-3">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            {% include 'main/sidebar.html' %}
         </div>
 
-        <!-- Price Input -->
-        <div class="form-group">
-            <label for="id_price">Price:</label>
-            <input type="number" step="0.01" name="price" id="id_price" class="form-control"
-                   placeholder="Enter course price">
-        </div>
-
-        <!-- Duration in Weeks -->
-        <div class="form-group">
-            <label for="id_duration_weeks">Duration (in weeks):</label>
-            <input type="number" name="duration_weeks" id="id_duration_weeks" class="form-control"
-                   placeholder="Enter course duration in weeks">
-        </div>
-
-        <!-- Modality Dropdown -->
-        <div class="form-group">
-            <label for="id_modality">Modality:</label>
-            <select name="modality" id="id_modality" class="form-control">
-                <option value="online">Online</option>
-                <option value="blended">Blended</option>
-                <option value="in_person">In-Person</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="id_cover_image">Cover Image:</label>
-            {{ course_form.cover_image }}
-        </div>
-        <div class="form-group">
-            <label for="id_open_for_registration">Open for Registration:</label>
-            {{ course_form.open_for_registration }}
-        </div>
-        <div class="form-group">
-            <label for="id_start_date">Start Date:</label>
-            <input type="date" name="start_date" id="id_start_date" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-success">Create Course</button>
-    </form>
-
-    <!-- List of Courses -->
-    <h3>Courses</h3>
-    <ul>
-        {% for course in courses %}
-            <li>
-                <h4>{{ course.name }}</h4>
-                {% if course.cover_image %}
-                    <img src="{{ course.cover_image.url }}" alt="Cover image for {{ course.name }}"
-                         style="max-width: 200px;">
-                {% endif %}
-                <p>{{ course.description }}</p>
-                <p>Open for Registration: {{ course.open_for_registration }}</p>
-                <a href="{% url 'course-edit' course.pk %}" class="btn btn-primary btn-sm">Edit Course</a>
-                <a href="{% url 'edit-lessons' course.pk %}" class="btn btn-warning btn-sm">Edit Lessons</a>
-                <!-- New Edit Lessons button -->
-                <a href="javascript:void(0);" class="btn btn-danger btn-sm"
-                   onclick="confirmDelete({{ course.pk }}, '{{ course.name }}');">Delete</a>
-                <a href="{% url 'teacher-course-students' course.id %}" class="btn btn-info btn-sm">View Students</a>
-                <!-- Add Lesson Form -->
-                <form method="POST" action="{% url 'lesson-create' course.pk %}">
-                    {% csrf_token %}
-                    <div>
-                        <label for="lesson_name_{{ course.id }}">Lesson Name:</label>
-                        <input type="text" name="name" id="lesson_name_{{ course.id }}" placeholder="Lesson Name">
-                    </div>
-                    <div>
-                        <label for="lesson_description_{{ course.id }}">Lesson Description:</label>
-                        <textarea name="description" id="lesson_description_{{ course.id }}"
-                                  placeholder="Lesson Description"></textarea>
-                    </div>
-                    <div>
-                        <label for="lesson_open_date_{{ course.id }}">Open Date:</label>
-                        <input type="date" name="open_date" id="lesson_open_date_{{ course.id }}">
-                    </div>
-                    <div>
-                        <label for="lesson_open_time_{{ course.id }}">Open Time:</label>
-                        <input type="time" name="open_time" id="lesson_open_time_{{ course.id }}">
-                    </div>
-                    <input type="hidden" name="course" value="{{ course.id }}">
-                    <button type="submit" class="btn btn-secondary btn-sm">Add Lesson</button>
-                </form>
-                <!-- List of Lessons -->
-                <h5>Lessons</h5>
-                <ul>
-                    {% for lesson in course.lesson_set.all %}
-                        <li>
-                            <strong>{{ lesson.name }}</strong>: {{ lesson.description }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </li>
-        {% endfor %}
-    </ul>
-</main>
-
-<!-- Modal for Adding Category -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="addCategoryForm" method="POST" action="{% url 'add-category' %}">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="category_name">Category Name</label>
-                        <input type="text" class="form-control" id="category_name" name="category_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="category_description">Category Description</label>
-                        <textarea class="form-control" id="category_description" name="category_description"></textarea>
+        <!-- Main content -->
+        <div class="col-md-7">
+            <!-- My Courses Section -->
+            <h2>My Courses</h2>
+            {% for course in courses %}
+                <div class="course-card mb-4" onclick="window.location.href='{% url 'course-edit' course.id %}'">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{ course.cover_image.url }}" alt="Course Photo" class="img-fluid">
+                        </div>
+                        <div class="col-md-8">
+                            <h4>{{ course.name }}</h4>
+                            <p>{{ course.enrollment_set.count }} Students Enrolled</p>
+                            <p class="manage-course"><strong>Manage Course</strong></p>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Add Category</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </form>
+            {% endfor %}
+
+            <!-- Activity Feed Section -->
+            <h2>Activity Feed</h2>
+            <div class="activity-feed mb-4">
+                {% for activity in activities %}
+                    <div class="activity-item">
+                        <p>"{{ activity.student_name }}" finished lesson "{{ activity.lesson_name }}" in
+                            "{{ activity.course_name }}"</p>
+                        <button class="btn btn-primary">View Progress</button>
+                    </div>
+                {% empty %}
+                    <p>No recent activity.</p>
+                {% endfor %}
+            </div>
         </div>
-    </div>
-</div>
-<!-- Modal for Confirming Delete -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete the course: <strong id="courseName"></strong>?</p>
-            </div>
-            <div class="modal-footer">
-                <form method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </form>
+
+        <!-- Right Sidebar -->
+        <div class="col-md-3">
+            <!-- Calendar or other widgets can go here -->
+            <div class="calendar">
+                <h3>Calendar</h3>
+                <img src="{% static 'images/calendar.png' %}" alt="Calendar" class="img-fluid">
             </div>
         </div>
     </div>
 </div>
 
+{% include 'main/footer_HA.html' %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    function confirmDelete(courseId, courseName) {
-        document.querySelector('#deleteModal #courseName').textContent = courseName;
-        document.querySelector('#deleteModal form').setAttribute('action', `/courses/${courseId}/delete/`);
-        $('#deleteModal').modal('show');
-    }
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
 
-    $(document).ready(function () {
-        $('#addCategoryForm').on('submit', function (e) {
-            e.preventDefault();  // Prevent the default form submission
-
-            $.ajax({
-                type: $(this).attr('method'),
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        // Append the new category to the dropdown
-                        $('#id_category').append(new Option(response['category_name'], response['category_id']));
-                        $('#addCategoryModal').modal('hide'); // Hide the modal
-                        $('#addCategoryForm')[0].reset(); // Reset the form
-                    } else {
-                        alert('There was an error adding the category.');
-                    }
-                },
-                error: function () {
-                    alert('An error occurred. Please try again.');
-                }
-            });
-        });
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
     });
 </script>
-
 </body>
 </html>

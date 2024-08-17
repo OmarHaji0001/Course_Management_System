@@ -1,0 +1,39 @@
+/* Edit Course Page Styles */
+body {
+    background-color: #f4f4f4;
+}
+
+.container-fluid {
+    padding-top: 20px;
+}
+
+h2 {
+    color: #900;
+    margin-bottom: 20px;
+}
+
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.btn-primary {
+    background-color: #900 !important; /* Ensure this overrides Bootstrap */
+    color: white !important; /* Ensure text is white */
+    border: none !important; /* Remove any border */
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background-color: #841626 !important; /* Hover effect */
+    cursor: pointer;
+    text-decoration: none;
+}
