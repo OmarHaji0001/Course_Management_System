@@ -28,7 +28,14 @@
 
         <!-- Main content -->
         <div class="col-md-10">
-            <h2>Edit Course</h2>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Edit Course</h2>
+                <div>
+                    <a href="{% url 'edit-lesson' course.id %}" class="btn btn-info btn-sm">Manage Lessons</a>
+                    <a href="javascript:void(0);" class="btn btn-danger btn-sm"
+                       onclick="confirmDelete({{ course.pk }}, '{{ course.name }}');">Delete</a>
+                </div>
+            </div>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
@@ -109,6 +116,31 @@
 
 {% include 'main/footer_HA.html' %}
 
+<!-- Modal for Confirming Delete -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the course: <strong id="courseName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal for Adding Category -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
      aria-hidden="true">
@@ -146,13 +178,21 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
-        document.getElementById('dropdownMenu').classList.toggle('show');
-    });
     AOS.init({
         duration: 1000,
         once: true,
     });
+
+    function confirmDelete(courseId, courseName) {
+        document.querySelector('#deleteModal #courseName').textContent = courseName;
+        document.querySelector('#deleteModal form').setAttribute('action', `/courses/${courseId}/delete/`);
+        $('#deleteModal').modal('show');
+    }
+
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+
     $(document).ready(function () {
         $('#addCategoryForm').on('submit', function (e) {
             e.preventDefault();  // Prevent the default form submission

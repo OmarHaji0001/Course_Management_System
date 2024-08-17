@@ -29,5 +29,5 @@ urlpatterns = [
     path('courses/<int:course_id>/students/<int:student_id>/', teacher_student_progress,
          name='teacher-student-progress'),
     path('add-category/', add_category, name='add-category'),
-    path('courses/<int:pk>/edit-lessons/', EditLessonsView.as_view(), name='edit-lessons'),
+    path('courses/<int:course_id>/lessons/edit/', EditLessonsView.as_view(), name='edit-lesson'),
 ]

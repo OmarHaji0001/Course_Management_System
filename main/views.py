@@ -117,13 +117,13 @@ class EditLessonsView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        course = get_object_or_404(Course, pk=self.kwargs['pk'])
+        course = get_object_or_404(Course, pk=self.kwargs['course_id'])  # Use course_id instead of pk
         context['course'] = course
         context['lessons'] = course.lesson_set.all()
         return context
 
     def post(self, request, *args, **kwargs):
-        course = get_object_or_404(Course, pk=self.kwargs['pk'])
+        course = get_object_or_404(Course, pk=self.kwargs['course_id'])  # Use course_id instead of pk
         lessons = course.lesson_set.all()
 
         for lesson in lessons:

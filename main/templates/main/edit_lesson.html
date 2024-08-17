@@ -5,59 +5,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Lessons</title>
+    <link rel="stylesheet" href="{% static 'css/edit_lesson.css' %}">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/TD.css' %}">
-    <style>
-        .lesson-section {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body>
-<header>
-    <h1>Edit Lessons for {{ course.name }}</h1>
-    <nav>
-        <form id="logout-form" method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Logout</button>
-        </form>
-    </nav>
+<header class="top-bar">
+    {% include 'main/top_bar_STA.html' %}
 </header>
-<main>
-    <form method="POST">
-        {% csrf_token %}
-        {% for lesson in lessons %}
-            <div class="lesson-section">
-                <input type="hidden" name="lesson_id_{{ lesson.id }}" value="{{ lesson.id }}">
-                <div class="form-group">
-                    <label for="lesson_name_{{ lesson.id }}">Lesson Name:</label>
-                    <input type="text" name="name_{{ lesson.id }}" id="lesson_name_{{ lesson.id }}" class="form-control"
-                           value="{{ lesson.name }}">
-                </div>
-                <div class="form-group">
-                    <label for="lesson_description_{{ lesson.id }}">Lesson Description:</label>
-                    <textarea name="description_{{ lesson.id }}" id="lesson_description_{{ lesson.id }}"
-                              class="form-control">{{ lesson.description }}</textarea>
-                </div>
-                <div class="form-group">
-                    <label for="lesson_open_date_{{ lesson.id }}">Open Date:</label>
-                    <input type="date" name="open_date_{{ lesson.id }}" id="lesson_open_date_{{ lesson.id }}"
-                           class="form-control" value="{{ lesson.open_date|date:'Y-m-d' }}">
-                </div>
-                <div class="form-group">
-                    <label for="lesson_open_time_{{ lesson.id }}">Open Time:</label>
-                    <input type="time" name="open_time_{{ lesson.id }}" id="lesson_open_time_{{ lesson.id }}"
-                           class="form-control" value="{{ lesson.open_time|time:'H:i' }}">
-                </div>
-            </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Save Changes</button>
-        <a href="{% url 'teacher-dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
-    </form>
-</main>
+
+<div class="container-fluid mt-3 edit-lessons-container">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            {% include 'main/sidebar.html' %}
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-10">
+            <h2>Edit Lessons for {{ course.name }}</h2>
+            <form method="POST">
+                {% csrf_token %}
+                {% for lesson in lessons %}
+                    <div class="lesson-section mb-4">
+                        <input type="hidden" name="lesson_id_{{ lesson.id }}" value="{{ lesson.id }}">
+                        <div class="form-group">
+                            <label for="lesson_name_{{ lesson.id }}">Lesson Name:</label>
+                            <input type="text" name="name_{{ lesson.id }}" id="lesson_name_{{ lesson.id }}"
+                                   class="form-control"
+                                   value="{{ lesson.name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="lesson_description_{{ lesson.id }}">Lesson Description:</label>
+                            <textarea name="description_{{ lesson.id }}" id="lesson_description_{{ lesson.id }}"
+                                      class="form-control">{{ lesson.description }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="lesson_open_date_{{ lesson.id }}">Open Date:</label>
+                            <input type="date" name="open_date_{{ lesson.id }}" id="lesson_open_date_{{ lesson.id }}"
+                                   class="form-control" value="{{ lesson.open_date|date:'Y-m-d' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="lesson_open_time_{{ lesson.id }}">Open Time:</label>
+                            <input type="time" name="open_time_{{ lesson.id }}" id="lesson_open_time_{{ lesson.id }}"
+                                   class="form-control" value="{{ lesson.open_time|time:'H:i' }}">
+                        </div>
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-save-changes" name="save_changes">Save Changes</button>
+                <a href="{% url 'teacher-dashboard' %}" class="btn btn-back">Back to Dashboard</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'main/footer_HA.html' %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
 </body>
 </html>

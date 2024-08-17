@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Teacher Dashboard</title>
 </head>
@@ -63,11 +63,8 @@
 
         <!-- Right Sidebar -->
         <div class="col-md-3">
-            <!-- Calendar or other widgets can go here -->
-            <div class="calendar">
-                <h3>Calendar</h3>
-                <img src="{% static 'images/calendar.png' %}" alt="Calendar" class="img-fluid">
-            </div>
+            <h3>Calendar</h3>
+            <div id="calendar"></div>
         </div>
     </div>
 </div>
@@ -78,6 +75,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
     AOS.init({
         duration: 1000,
@@ -86,6 +85,13 @@
 
     document.getElementById('dropdownMenuButton').addEventListener('click', function () {
         document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr("#calendar", {
+            inline: true,  // Show the calendar inline, without needing to click an input field
+            dateFormat: "Y-m-d",
+        });
     });
 </script>
 </body>
