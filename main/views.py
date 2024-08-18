@@ -41,27 +41,6 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
                 tag, created = Tag.objects.get_or_create(name=tag_name)
                 course.tags.add(tag)
 
-        # Handle lesson creation
-        num_lessons = int(self.request.POST.get('num_lessons', 0))  # Get the number of lessons
-        for i in range(1, num_lessons + 1):
-            lesson_name = self.request.POST.get(f'lesson_name_{i}')
-            lesson_description = self.request.POST.get(f'lesson_description_{i}')
-            lesson_open_date = self.request.POST.get(f'lesson_open_date_{i}')
-            lesson_open_time = self.request.POST.get(f'lesson_open_time_{i}')
-
-            # Ensure all required fields are provided
-            if lesson_name and lesson_description and lesson_open_date and lesson_open_time:
-                lesson = Lesson(
-                    course=course,
-                    name=lesson_name,
-                    description=lesson_description,
-                    open_date=lesson_open_date,
-                    open_time=lesson_open_time
-                )
-                lesson.save()  # Save each lesson
-            else:
-                messages.error(self.request, f"Lesson {i} could not be created due to missing data.")
-
         return super().form_valid(form)
 
 
@@ -142,13 +121,13 @@ class EditLessonsView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        course = get_object_or_404(Course, pk=self.kwargs['course_id'])  # Use course_id instead of pk
+        course = get_object_or_404(Course, pk=self.kwargs['course_id'])
         context['course'] = course
         context['lessons'] = course.lesson_set.all()
         return context
 
     def post(self, request, *args, **kwargs):
-        course = get_object_or_404(Course, pk=self.kwargs['course_id'])  # Use course_id instead of pk
+        course = get_object_or_404(Course, pk=self.kwargs['course_id'])
         lessons = course.lesson_set.all()
 
         for lesson in lessons:
@@ -165,11 +144,35 @@ class EditLessonsView(LoginRequiredMixin, TemplateView):
 class LessonCreateView(LoginRequiredMixin, CreateView):
     model = Lesson
     form_class = LessonForm
+    template_name = 'main/create_lesson.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course = get_object_or_404(Course, pk=self.kwargs['course_id'])
+        context['course'] = course  # Pass the course object to the template
+        return context
+
+    def form_valid(self, form):
+        lesson = form.save(commit=False)
+        lesson.course = get_object_or_404(Course, pk=self.kwargs['course_id'])
+        lesson.save()
+        return redirect('edit-lesson', course_id=lesson.course.id)
+
+    def get_success_url(self):
+        return reverse_lazy('edit-lesson', kwargs={'course_id': self.object.course.id})
+
+
+class LessonDeleteView(LoginRequiredMixin, DeleteView):
+    model = Lesson
+    pk_url_kwarg = 'lesson_id'
     template_name = 'main/teachers_dashboard.html'
-    success_url = reverse_lazy('teacher-dashboard')
 
+    def get_success_url(self):
+        return reverse_lazy('edit-lesson', kwargs={'course_id': self.kwargs['course_id']})
 
-# views.py
+    def get_object(self, queryset=None):
+        return get_object_or_404(Lesson, pk=self.kwargs['lesson_id'])
+
 
 class LessonDetailView(LoginRequiredMixin, DetailView):
     model = Lesson

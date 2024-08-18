@@ -1,0 +1,73 @@
+{% load crispy_forms_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/edit_course.css' %}">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <title>Create Lesson for {{ course.name }}</title>
+</head>
+<body>
+<header class="top-bar">
+    {% include 'main/top_bar_STA.html' %}
+</header>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            {% include 'main/sidebar.html' %}
+        </div>
+
+        <!-- Main content -->
+        <div class="col-md-10">
+            <h2>Create Lesson for {{ course.name }}</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.name|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    {{ form.description|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    {{ form.open_date|as_crispy_field }}
+                </div>
+                <div class="form-group">
+                    {{ form.open_time|as_crispy_field }}
+                </div>
+                <button type="submit" class="btn btn-primary">Create Lesson</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
+
+    function confirmDelete(courseId, courseName) {
+        document.querySelector('#deleteModal #courseName').textContent = courseName;
+        document.querySelector('#deleteModal form').setAttribute('action', `/courses/${courseId}/delete/`);
+        $('#deleteModal').modal('show');
+    }
+
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
+{% include 'main/footer_HA.html' %}
+</body>
+</html>

@@ -46,6 +46,26 @@ h2 {
     text-decoration: none;
 }
 
+.btn-add-lesson {
+    background-color: #db8141 !important; /* Ensure this overrides Bootstrap */
+    color: white !important; /* Ensure text is white */
+    border: none !important; /* Remove any border */
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-add-lesson:hover {
+    background-color: #ca62a4 !important; /* Hover effect */
+    cursor: pointer;
+    text-decoration: none;
+}
+
 .btn-back {
     background-color: #666 !important;
     color: white !important;

@@ -22,7 +22,11 @@ class CategoryForm(forms.ModelForm):
 class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
-        fields = ['name', 'description', 'course', 'open_date', 'open_time']
+        fields = ['name', 'description', 'open_date', 'open_time']
+        widgets = {
+            'open_date': forms.DateInput(attrs={'type': 'date'}),
+            'open_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
 
 
 class FeedbackForm(forms.ModelForm):

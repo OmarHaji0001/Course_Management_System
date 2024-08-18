@@ -89,16 +89,6 @@
                     </div>
                 </fieldset>
 
-                <!-- Lesson Creation -->
-                <fieldset class="mb-4">
-                    <legend>Create Lessons</legend>
-                    <div class="form-group">
-                        <label for="num_lessons">Number of Lessons:</label>
-                        <input type="number" id="num_lessons" class="form-control" placeholder="Enter number of lessons">
-                    </div>
-                    <div id="lessons_container"></div>
-                </fieldset>
-
                 <button type="submit" class="btn btn-primary" name="create_course">Create Course</button>
             </form>
         </div>
@@ -157,61 +147,6 @@
 
     document.getElementById('dropdownMenuButton').addEventListener('click', function () {
         document.getElementById('dropdownMenu').classList.toggle('show');
-    });
-
-    $(document).ready(function () {
-        $('#addCategoryForm').on('submit', function (e) {
-            e.preventDefault();  // Prevent the default form submission
-
-            $.ajax({
-                type: $(this).attr('method'),
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        // Append the new category to the dropdown
-                        $('#id_category').append(new Option(response['category_name'], response['category_id']));
-                        $('#addCategoryModal').modal('hide'); // Hide the modal
-                        $('#addCategoryForm')[0].reset(); // Reset the form
-                    } else {
-                        alert('There was an error adding the category.');
-                    }
-                },
-                error: function () {
-                    alert('An error occurred. Please try again.');
-                }
-            });
-        });
-
-        $('#num_lessons').on('input', function () {
-            let numLessons = $(this).val();
-            let lessonsContainer = $('#lessons_container');
-            lessonsContainer.empty();
-
-            for (let i = 1; i <= numLessons; i++) {
-                lessonsContainer.append(`
-                    <div class="lesson-block mb-4">
-                        <h5>Lesson ${i}</h5>
-                        <div class="form-group">
-                            <label for="lesson_name_${i}">Lesson Name:</label>
-                            <input type="text" name="lesson_name_${i}" id="lesson_name_${i}" class="form-control" placeholder="Enter lesson name">
-                        </div>
-                        <div class="form-group">
-                            <label for="lesson_description_${i}">Lesson Description:</label>
-                            <textarea name="lesson_description_${i}" id="lesson_description_${i}" class="form-control" placeholder="Enter lesson description"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="lesson_open_date_${i}">Open Date:</label>
-                            <input type="date" name="lesson_open_date_${i}" id="lesson_open_date_${i}" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="lesson_open_time_${i}">Open Time:</label>
-                            <input type="time" name="lesson_open_time_${i}" id="lesson_open_time_${i}" class="form-control">
-                        </div>
-                    </div>
-                `);
-            }
-        });
     });
 </script>
 
