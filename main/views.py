@@ -18,25 +18,49 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 
 
+@method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseCreateView(LoginRequiredMixin, CreateView):
     model = Course
     form_class = CourseForm
-    template_name = 'main/teachers_dashboard.html'
+    template_name = 'main/create_course.html'
     success_url = reverse_lazy('teacher-dashboard')
 
     def form_valid(self, form):
+        # Save the course
         course = form.save(commit=False)
+        course.teacher = self.request.user  # Assign the logged-in user as the course creator
         course.cover_image = self.request.FILES.get('cover_image')
         course.start_date = form.cleaned_data['start_date']  # Handle the start date
         course.save()
 
         # Handle tags
-        tags_input = form.cleaned_data['tags']
+        tags_input = form.cleaned_data.get('tags')
         if tags_input:
             tags_list = [tag.strip() for tag in tags_input.split(',')]
             for tag_name in tags_list:
                 tag, created = Tag.objects.get_or_create(name=tag_name)
                 course.tags.add(tag)
+
+        # Handle lesson creation
+        num_lessons = int(self.request.POST.get('num_lessons', 0))  # Get the number of lessons
+        for i in range(1, num_lessons + 1):
+            lesson_name = self.request.POST.get(f'lesson_name_{i}')
+            lesson_description = self.request.POST.get(f'lesson_description_{i}')
+            lesson_open_date = self.request.POST.get(f'lesson_open_date_{i}')
+            lesson_open_time = self.request.POST.get(f'lesson_open_time_{i}')
+
+            # Ensure all required fields are provided
+            if lesson_name and lesson_description and lesson_open_date and lesson_open_time:
+                lesson = Lesson(
+                    course=course,
+                    name=lesson_name,
+                    description=lesson_description,
+                    open_date=lesson_open_date,
+                    open_time=lesson_open_time
+                )
+                lesson.save()  # Save each lesson
+            else:
+                messages.error(self.request, f"Lesson {i} could not be created due to missing data.")
 
         return super().form_valid(form)
 
@@ -103,6 +127,7 @@ class CourseUpdateView(LoginRequiredMixin, UpdateView):
 
         # Save the course with the updated information
         return super().form_valid(form)
+
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseDeleteView(LoginRequiredMixin, DeleteView):
