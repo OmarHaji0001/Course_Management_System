@@ -1,6 +1,9 @@
+from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.forms import modelformset_factory
+
 from .models import Course, Lesson, Feedback, Category
 
 
@@ -20,6 +23,8 @@ class CategoryForm(forms.ModelForm):
 
 
 class LessonForm(forms.ModelForm):
+    description = forms.CharField(widget=CKEditorWidget())
+
     class Meta:
         model = Lesson
         fields = ['name', 'description', 'open_date', 'open_time']
@@ -27,6 +32,9 @@ class LessonForm(forms.ModelForm):
             'open_date': forms.DateInput(attrs={'type': 'date'}),
             'open_time': forms.TimeInput(attrs={'type': 'time'}),
         }
+
+
+LessonFormSet = modelformset_factory(Lesson, form=LessonForm, extra=0)
 
 
 class FeedbackForm(forms.ModelForm):

@@ -1,3 +1,4 @@
+from ckeditor.fields import RichTextField
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import date, time
@@ -60,7 +61,7 @@ class Course(models.Model):
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
+    description = RichTextField()
     open_date = models.DateField(default=date.today)
     open_time = models.TimeField(default=time(0, 0))
 

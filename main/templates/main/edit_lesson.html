@@ -1,3 +1,4 @@
+{% load crispy_forms_filters %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +18,6 @@
 <header class="top-bar">
     {% include 'main/top_bar_STA.html' %}
 </header>
-
 <div class="container-fluid mt-3 edit-lessons-container">
     <div class="row">
         <!-- Sidebar -->
@@ -33,43 +33,21 @@
             </div>
             <form method="POST">
                 {% csrf_token %}
-                {% for lesson in lessons %}
+                {% for form in lesson_forms %}
                     <div class="lesson-section mb-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="w-100">
-                                <input type="hidden" name="lesson_id_{{ lesson.id }}" value="{{ lesson.id }}">
-                                <div class="form-group">
-                                    <label for="lesson_name_{{ lesson.id }}">Lesson Name:</label>
-                                    <input type="text" name="name_{{ lesson.id }}" id="lesson_name_{{ lesson.id }}"
-                                           class="form-control w-100"
-                                           value="{{ lesson.name }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="lesson_description_{{ lesson.id }}">Lesson Description:</label>
-                                    <textarea name="description_{{ lesson.id }}" id="lesson_description_{{ lesson.id }}"
-                                              class="form-control w-100">{{ lesson.description }}</textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lesson_open_date_{{ lesson.id }}">Open Date:</label>
-                                    <input type="date" name="open_date_{{ lesson.id }}" id="lesson_open_date_{{ lesson.id }}"
-                                           class="form-control w-100" value="{{ lesson.open_date|date:'Y-m-d' }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="lesson_open_time_{{ lesson.id }}">Open Time:</label>
-                                    <input type="time" name="open_time_{{ lesson.id }}" id="lesson_open_time_{{ lesson.id }}"
-                                           class="form-control w-100" value="{{ lesson.open_time|time:'H:i' }}">
-                                </div>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteLessonModal" data-course-id="{{ course.id }}" data-lesson-id="{{ lesson.id }}" data-lesson-name="{{ lesson.name }}">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
+                        <h3>Edit Lesson: {{ form.instance.name }}</h3>
+                        {{ form.name|as_crispy_field }}
+                        {{ form.description|as_crispy_field }}
+                        {{ form.open_date|as_crispy_field }}
+                        {{ form.open_time|as_crispy_field }}
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteLessonModal"
+                                data-course-id="{{ course.id }}" data-lesson-id="{{ form.instance.id }}" data-lesson-name="{{ form.instance.name }}">
+                            Delete
+                        </button>
                     </div>
                 {% endfor %}
-                <button type="submit" class="btn btn-save-changes" name="save_changes">Save Changes</button>
-                <a href="{% url 'teacher-dashboard' %}" class="btn btn-back">Back to Dashboard</a>
+                <button type="submit" class="btn btn-save-changes">Save Changes</button>
+                <a href="{% url 'teacher-dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
             </form>
         </div>
     </div>
@@ -78,8 +56,7 @@
 {% include 'main/footer_HA.html' %}
 
 <!-- Modal for Deleting Lesson -->
-<div class="modal fade" id="deleteLessonModal" tabindex="-1" role="dialog" aria-labelledby="deleteLessonModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="deleteLessonModal" tabindex="-1" role="dialog" aria-labelledby="deleteLessonModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -108,14 +85,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 <script>
     AOS.init({
         duration: 1000,
         once: true,
-    });
-
-    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
-        document.getElementById('dropdownMenu').classList.toggle('show');
     });
 
     $('#deleteLessonModal').on('show.bs.modal', function (event) {
@@ -127,9 +102,15 @@
         var modal = $(this);
         modal.find('#lessonIdToDelete').val(lessonId);
         modal.find('#courseIdToDelete').val(courseId);
-
         modal.find('#lessonNameToDelete').text(lessonName);
         $('#deleteLessonForm').attr('action', `/courses/${courseId}/lessons/${lessonId}/delete/`);
+    });
+
+    // Initialize CKEditor for all textareas with the class 'ckeditor'
+    $(document).ready(function() {
+        $('.ckeditor').each(function() {
+            CKEDITOR.replace(this.id);
+        });
     });
 </script>
 </body>

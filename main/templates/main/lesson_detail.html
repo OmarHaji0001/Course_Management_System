@@ -24,7 +24,7 @@
             <p><strong>Open date:</strong> {{ lesson.open_date }}</p>
             <p><strong>Open time:</strong> {{ lesson.open_time }}</p>
             <div class="lesson-description">
-                {{ lesson.description|linebreaks }}
+                {{ lesson.description|safe }}
             </div>
 
             <h3>Completion</h3>

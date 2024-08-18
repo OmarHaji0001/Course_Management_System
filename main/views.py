@@ -115,29 +115,33 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('teacher-dashboard')
 
 
-@method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
-class EditLessonsView(LoginRequiredMixin, TemplateView):
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(lambda u: u.profile.role == 'instructor'), name='dispatch')
+class EditLessonsView(TemplateView):
     template_name = 'main/edit_lesson.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course = get_object_or_404(Course, pk=self.kwargs['course_id'])
+        lessons = course.lesson_set.all()
+        lesson_forms = [LessonForm(instance=lesson, prefix=str(lesson.id)) for lesson in lessons]
         context['course'] = course
-        context['lessons'] = course.lesson_set.all()
+        context['lesson_forms'] = lesson_forms
         return context
 
     def post(self, request, *args, **kwargs):
         course = get_object_or_404(Course, pk=self.kwargs['course_id'])
         lessons = course.lesson_set.all()
+        lesson_forms = [LessonForm(request.POST, instance=lesson, prefix=str(lesson.id)) for lesson in lessons]
 
-        for lesson in lessons:
-            lesson.name = request.POST.get(f'name_{lesson.id}')
-            lesson.description = request.POST.get(f'description_{lesson.id}')
-            lesson.open_date = request.POST.get(f'open_date_{lesson.id}')
-            lesson.open_time = request.POST.get(f'open_time_{lesson.id}')
-            lesson.save()
+        if all([form.is_valid() for form in lesson_forms]):
+            for form in lesson_forms:
+                form.save()
+            return redirect('teacher-dashboard')
 
-        return redirect('teacher-dashboard')
+        context = self.get_context_data()
+        context['lesson_forms'] = lesson_forms
+        return self.render_to_response(context)
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
