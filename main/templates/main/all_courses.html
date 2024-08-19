@@ -213,7 +213,7 @@
         {% for course in courses %}
             {% if forloop.counter <= 3 %}
                 <div class="col-md-4 mb-4">
-                    <div class="card">
+                    <div class="card" onclick="window.location.href='{% url 'course-card-detail' course.id %}'">
                         <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
                         <div class="card-body">
                             <div class="card-category-modality">
@@ -243,7 +243,7 @@
 
     {% if forloop.counter > 3 %}
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card" onclick="window.location.href='{% url 'course-card-detail' course.id %}'">
                 <img class="card-img-top" src="{{ course.cover_image.url }}" alt="{{ course.name }}">
                 <div class="card-body">
                     <div class="card-category-modality">

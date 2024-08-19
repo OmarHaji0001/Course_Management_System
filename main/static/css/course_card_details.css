@@ -1,0 +1,116 @@
+.Enroll {
+    background-color: #900;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.Enroll:hover {
+    background-color: #841626;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background-color: #900; /* Adjust to your preferred color */
+    height: 250px; /* Adjust height as needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.hero-section .logo-center {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    max-height: 150px;
+    cursor: pointer;
+}
+
+.hero-section .course-name {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+/* Content Section */
+.content-section {
+    margin-top: 20px;
+}
+
+.left-section {
+    margin-bottom: 20px;
+}
+
+.right-section {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+/* Course Info Card */
+.course-info-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-info-card .info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.course-info-card .info-item i {
+    font-size: 1.5rem;
+    color: #900;
+    margin-right: 15px;
+}
+
+.course-info-card .info-item .info-text {
+    font-size: 1rem;
+}
+
+.course-info-card .info-item .info-text .label {
+    font-weight: bold;
+    color: #555;
+}
+
+.course-info-card .info-item .info-text .value {
+    color: #333;
+    margin-left: 5px;
+}
+
+/* Specific Adjustments */
+.info-item i.fa-dollar-sign {
+    color: green;
+}
+
+.info-item i.fa-calendar-alt {
+    color: #900; /* Red color for the calendar icon */
+}
+
+@media (max-width: 992px) {
+    .right-section {
+        margin-top: 20px;
+    }
+}

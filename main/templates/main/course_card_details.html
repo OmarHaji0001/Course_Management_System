@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/top_bar_HA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/course_card_details.css' %}">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <title>{{ course.name }} - Course Details</title>
+</head>
+<body>
+<header class="top-bar">
+    {% include 'main/top_bar_HA.html' %}
+</header>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="logo-center">
+        <img src="{% static 'images/LKWLogo.png' %}" alt="Course Logo">
+    </div>
+    <div class="course-name">{{ course.name }}</div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left Section: Course Image, Description, and Instructor -->
+        <div class="col-lg-7 left-section">
+            <!-- Course Image -->
+            <div class="course-image">
+                <img src="{{ course.cover_image.url }}" class="img-fluid" alt="Course Image">
+            </div>
+
+            <!-- Course Description -->
+            <h2 class="mt-4">About this Course</h2>
+            <p>{{ course.description }}</p>
+            <p><strong>Instructor:</strong> {{ course.teacher }}</p>
+
+            {% if user.is_authenticated %}
+                {% if is_enrolled %}
+                    <button class="btn btn-success" disabled>Enrolled</button>
+                {% else %}
+                    <a href="{% url 'enroll-in-course' course.id %}" class="btn btn-primary Enroll">Enroll</a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}?next={% url 'course-card-detail' course.id %}" class="btn btn-primary">Login to Enroll</a>
+            {% endif %}
+        </div>
+
+        <!-- Right Section: Course Info Card -->
+        <div class="col-lg-5 right-section">
+            <div class="course-info-card">
+                <div class="info-item">
+                    <i class="fas fa-book"></i>
+                    <div class="info-text">
+                        <span class="label">Course Name:</span>
+                        <span class="value">{{ course.name }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-user"></i>
+                    <div class="info-text">
+                        <span class="label">Teacher Name:</span>
+                        <span class="value">{{ course.teacher }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clipboard-check"></i>
+                    <div class="info-text">
+                        <span class="label">Open for Registration:</span>
+                        <span class="value">{% if course.open_for_registration %}Yes{% else %}Not Yet{% endif %}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-calendar"></i>
+                    <div class="info-text">
+                        <span class="label">Created At:</span>
+                        <span class="value">{{ course.created_at|date:"F j, Y" }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-tag"></i>
+                    <div class="info-text">
+                        <span class="label">Category:</span>
+                        <span class="value">{{ course.category.name }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-laptop"></i>
+                    <div class="info-text">
+                        <span class="label">Modality:</span>
+                        <span class="value">{{ course.get_modality_display }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <div class="info-text">
+                        <span class="label">Price:</span>
+                        <span class="value">{{ course.price }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-hourglass-start"></i>
+                    <div class="info-text">
+                        <span class="label">Duration (weeks):</span>
+                        <span class="value">{{ course.duration_weeks }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-calendar-alt" style="color: #900;"></i>
+                    <div class="info-text">
+                        <span class="label">Start Date:</span>
+                        <span class="value">{{ course.start_date|date:"F j, Y" }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="info-text">
+                        <span class="label">Register By:</span>
+                        <span class="value">{% if course.start_date %}{{ course.start_date|date:"F j, Y" }}{% else %}N/A{% endif %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'main/footer_HA.html' %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
+
+    // Toggle dropdown on button click
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
+</body>
+</html>

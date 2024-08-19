@@ -18,6 +18,38 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 
 
+class CourseCardDetailView(DetailView):
+    model = Course
+    template_name = 'main/course_card_details.html'
+    context_object_name = 'course'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_enrolled'] = False
+        if self.request.user.is_authenticated:
+            context['is_enrolled'] = self.object.enrolled_students.filter(id=self.request.user.id).exists()
+        return context
+
+
+@login_required
+def enroll_in_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+
+    # Check if the user is already enrolled
+    if not Enrollment.objects.filter(course=course, user=request.user).exists():
+        # Create the Enrollment entry
+        Enrollment.objects.create(course=course, user=request.user)
+
+        # Add the user to the enrolled_students field in the Course model
+        course.enrolled_students.add(request.user)
+
+        messages.success(request, f'You have successfully enrolled in {course.name}.')
+    else:
+        messages.info(request, f'You are already enrolled in {course.name}.')
+
+    return redirect('course-card-detail', pk=course_id)
+
+
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')
 class CourseCreateView(LoginRequiredMixin, CreateView):
     model = Course
@@ -395,7 +427,13 @@ class LoginView(AuthLoginView):
     template_name = 'main/login.html'
 
     def get_success_url(self):
-        if self.request.user.profile.role == 'admin':
+        # Check if there is a 'next' parameter in the URL
+        next_url = self.request.GET.get('next')
+        print(self.request.GET)
+
+        if next_url:
+            return next_url
+        elif self.request.user.profile.role == 'admin':
             return reverse_lazy('admin-dashboard')
         elif self.request.user.profile.role == 'instructor':
             return reverse_lazy('teacher-dashboard')
@@ -436,17 +474,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             '-enrollment_count')[:5]
 
         return context
-
-
-@login_required
-def enroll_in_course(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
-    enrollment, created = Enrollment.objects.get_or_create(course=course, user=request.user)
-    if created:
-        messages.success(request, f'You have successfully enrolled in {course.name}.')
-    else:
-        messages.info(request, f'You are already enrolled in {course.name}.')
-    return redirect('dashboard')
 
 
 @login_required

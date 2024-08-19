@@ -50,6 +50,7 @@ class Course(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     duration_weeks = models.IntegerField(default=0)
     start_date = models.DateField(null=True, blank=True)
+    enrolled_students = models.ManyToManyField(User, related_name='enrolled_courses', blank=True)
 
     def is_free(self):
         return self.price == 0.00

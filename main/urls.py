@@ -4,7 +4,8 @@ from .views import (
     admin_dashboard, teacher_dashboard, CourseDetailView, enroll_in_course,
     CourseCreateView, CourseUpdateView, LessonCreateView, LessonDetailView,
     delete_course, teacher_course_students, teacher_student_progress,
-    mark_lesson_complete, submit_feedback, add_category, EditLessonsView, AllCoursesView, LessonDeleteView
+    mark_lesson_complete, submit_feedback, add_category, EditLessonsView, AllCoursesView, LessonDeleteView,
+    CourseCardDetailView
 )
 
 urlpatterns = [
@@ -31,4 +32,5 @@ urlpatterns = [
          name='teacher-student-progress'),
     path('add-category/', add_category, name='add-category'),
     path('courses/<int:course_id>/lessons/edit/', EditLessonsView.as_view(), name='edit-lesson'),
+    path('course_card_details/<int:pk>/', CourseCardDetailView.as_view(), name='course-card-detail'),
 ]
