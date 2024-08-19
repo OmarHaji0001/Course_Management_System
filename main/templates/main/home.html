@@ -25,11 +25,14 @@
         <i class="fas fa-bars"></i>
     </div>
     <div class="search-box">
-        <label>
-            <input type="text" placeholder="Search">
-        </label>
-        <i class="fas fa-search"></i>
+        <form method="get" action="{% url 'home' %}">
+            <input type="text" name="search" placeholder="Search courses..." required>
+            <button type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+        </form>
     </div>
+
     <div class="logo-center">
         <a href="{% url 'home' %}">
             <img src="{% static 'images/LKWLogo.png' %}" alt="LKW Wellness Logo" class="logo-image">

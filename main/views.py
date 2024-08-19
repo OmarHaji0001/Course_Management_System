@@ -323,6 +323,21 @@ def delete_course(request, pk):
 class HomeView(TemplateView):
     template_name = 'main/home.html'
 
+    def get(self, request, *args, **kwargs):
+        search_query = request.GET.get('search', '')
+
+        if search_query:
+            try:
+                # Redirect to course card detail page if the course is found
+                course = Course.objects.get(name__icontains=search_query)
+                return redirect('course-card-detail', pk=course.pk)
+            except Course.DoesNotExist:
+                # If no course is found, return to the home page with a message
+                messages.error(request, 'No course found with that name.')
+                return redirect('home')
+
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Filter courses that are open for registration and order them by creation date
