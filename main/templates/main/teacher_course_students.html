@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/student_cards.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <title>Enrolled Students - {{ course.name }}</title>
 </head>
 <body>
@@ -19,7 +20,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" data-aos="fade-right">
             {% include 'main/sidebar.html' %}
         </div>
         <div class="col-md-9 mt-5">
@@ -27,7 +28,7 @@
 
             <div class="row">
                 {% for student_data in students %}
-                    <div class="col-md-4 mb-4">
+                    <div class="col-md-4 mb-4" data-aos="fade-up">
                         <div class="card student-card"
                              onclick="window.location.href='{% url 'teacher_student_progress' course.id student_data.student.id %}'">
                             <div class="card-body">

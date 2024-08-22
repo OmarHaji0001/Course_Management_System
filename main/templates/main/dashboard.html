@@ -45,7 +45,7 @@
         <div class="col-md-4 featured-courses-container">
             <h3>Featured Courses</h3>
             {% for course in featured_courses %}
-                <div class="featured-course" data-aos="fade-up">
+                <div class="featured-course" onclick="window.location.href='{% url 'course-card-detail' course.id %}'" data-aos="fade-up">
                     <img src="{{ course.cover_image.url }}" alt="Course Photo" class="course-photo">
                     <div class="course-info">
                         <p>{{ course.name }}</p>

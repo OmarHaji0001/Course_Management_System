@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/teacher_student_progress.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <title>{{ student.username }}'s Progress in {{ course.name }}</title>
 </head>
 <body>
@@ -19,14 +20,14 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" data-aos="fade-right">
             {% include 'main/sidebar.html' %}
         </div>
         <div class="col-md-9 mt-5">
             <h2 style="margin-bottom: 20px">{{ student.username }}'s Progress in {{ course.name }}</h2>
 
             <!-- Student Info -->
-            <div class="mb-4">
+            <div class="mb-4" data-aos="fade-up">
                 <div class="section-header">
                     <h4>Student Information</h4>
                 </div>
@@ -39,7 +40,7 @@
             </div>
 
             <!-- Progress Bar -->
-            <div class="mb-4">
+            <div class="mb-4" data-aos="fade-up">
                 <div class="section-header">
                     <h4>Course Progress</h4>
                 </div>
@@ -56,7 +57,7 @@
             </div>
 
             <!-- Course Feedback -->
-            <div class="mb-4">
+            <div class="mb-4" data-aos="fade-up">
                 <div class="section-header">
                     <h4>Feedback</h4>
                 </div>

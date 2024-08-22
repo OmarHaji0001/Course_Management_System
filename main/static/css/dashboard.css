@@ -82,6 +82,8 @@
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
 }
 
 .featured-course img {
@@ -94,4 +96,9 @@
     margin: 0;
     font-size: 1em;
     color: #333;
+}
+
+.featured-course:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add hover shadow */
+    background-color: #f9f9f9; /* Slight background color change on hover */
 }
