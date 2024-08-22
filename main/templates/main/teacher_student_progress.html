@@ -4,40 +4,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/teacher_student_progress.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/TD.css' %}">
-    <title>{{ student.username }} - Progress in {{ course.name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>{{ student.username }}'s Progress in {{ course.name }}</title>
 </head>
 <body>
-<header>
-    <h1>{{ student.username }} - Progress in {{ course.name }}</h1>
-    <nav>
-        <form id="logout-form" method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    </nav>
+<header class="top-bar">
+    {% include 'main/top_bar_STA.html' %}
 </header>
-<main>
-    <h3>Course Progress</h3>
-    <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: {{ progress_percentage }}%;"
-             aria-valuenow="{{ progress_percentage }}" aria-valuemin="0"
-             aria-valuemax="100">{{ progress_percentage|floatformat:2 }}%
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            {% include 'main/sidebar.html' %}
+        </div>
+        <div class="col-md-9 mt-5">
+            <h2 style="margin-bottom: 20px">{{ student.username }}'s Progress in {{ course.name }}</h2>
+
+            <!-- Student Info -->
+            <div class="mb-4">
+                <div class="section-header">
+                    <h4>Student Information</h4>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <p><strong>Username:</strong> {{ student.username }}</p>
+                        <p><strong>Email:</strong> {{ student.email }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-4">
+                <div class="section-header">
+                    <h4>Course Progress</h4>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ progress_percentage }}%;"
+                                 aria-valuenow="{{ progress_percentage }}" aria-valuemin="0"
+                                 aria-valuemax="100">{{ progress_percentage }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Feedback -->
+            <div class="mb-4">
+                <div class="section-header">
+                    <h4>Feedback</h4>
+                </div>
+                {% if feedbacks %}
+                    {% for feedback in feedbacks %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <p>{{ feedback.comment }}</p>
+                                <small class="text-muted">Submitted on {{ feedback.created_at }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-content">No feedback submitted.</p>
+                {% endif %}
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="mb-4">
+                <div class="section-header">
+                    <h4>Activity Feed</h4>
+                </div>
+                {% if completions %}
+                    {% for completion in completions %}
+                        <div class="activity-item mb-2">
+                            <p>{{ completion.student.username }} completed "{{ completion.lesson.name }}" in
+                                "{{ completion.lesson.course.name }}"</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-content">No activities recorded.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
-    <h3>Completed Lessons</h3>
-    <ul>
-        {% for completion in completions %}
-            <li>{{ completion.lesson.name }}</li>
-        {% endfor %}
-    </ul>
-    <h3>Course Feedback</h3>
-    <ul>
-        {% for feedback in feedbacks %}
-            <li>{{ feedback.comment }}</li>
-        {% endfor %}
-    </ul>
-</main>
+</div>
+
+{% include 'main/footer_HA.html' %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
+
+    // Toggle dropdown on button click
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
 </body>
 </html>

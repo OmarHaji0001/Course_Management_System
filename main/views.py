@@ -267,28 +267,53 @@ def submit_feedback(request, course_id):
 
 @login_required
 def teacher_course_students(request, course_id):
-    course = get_object_or_404(Course, pk=course_id)
-    enrollments = Enrollment.objects.filter(course=course)
-    return render(request, 'main/teacher_course_students.html', {'course': course, 'enrollments': enrollments})
+    course = get_object_or_404(Course, id=course_id, teacher=request.user)
+    students = course.enrolled_students.all()
+    student_progress = []
+
+    for student in students:
+        lessons_count = course.lesson_set.count()
+        completed_lessons = Completion.objects.filter(student=student, lesson__course=course).count()
+        progress_percentage = (completed_lessons / lessons_count) * 100 if lessons_count > 0 else 0
+        student_progress.append({
+            'student': student,
+            'progress': progress_percentage
+        })
+
+    paginator = Paginator(student_progress, 6)  # Show 6 students per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'main/teacher_course_students.html', {
+        'course': course,
+        'students': page_obj,
+    })
 
 
 @login_required
 def teacher_student_progress(request, course_id, student_id):
     course = get_object_or_404(Course, pk=course_id)
     student = get_object_or_404(User, pk=student_id)
-    completions = Completion.objects.filter(student=student, lesson__course=course)
+
+    # Fetch the student's course progress
+    total_lessons = course.lesson_set.count()
+    completed_lessons = Completion.objects.filter(student=student, lesson__course=course).count()
+    progress_percentage = (completed_lessons / total_lessons) * 100 if total_lessons > 0 else 0
+
+    # Fetch the student's feedback for this course
     feedbacks = Feedback.objects.filter(student=student, course=course)
 
-    total_lessons = course.lesson_set.count()
-    completed_lessons = completions.count()
-    progress_percentage = (completed_lessons / total_lessons) * 100 if total_lessons > 0 else 0
+    # Fetch the student's completion activities
+    completions = Completion.objects.filter(student=student, lesson__course=course).select_related('lesson',
+                                                                                                   'lesson__course').order_by(
+        '-id')
 
     return render(request, 'main/teacher_student_progress.html', {
         'course': course,
         'student': student,
-        'completions': completions,
-        'feedbacks': feedbacks,
         'progress_percentage': progress_percentage,
+        'feedbacks': feedbacks,
+        'completions': completions,
     })
 
 

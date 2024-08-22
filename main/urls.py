@@ -1,9 +1,10 @@
 from django.urls import path
+from . import views
 from .views import (
     HomeView, SignUpView, LoginView, LogoutView, DashboardView,
     admin_dashboard, teacher_dashboard, CourseDetailView, enroll_in_course,
     CourseCreateView, CourseUpdateView, LessonCreateView, LessonDetailView,
-    delete_course, teacher_course_students, teacher_student_progress,
+    delete_course, teacher_student_progress,
     mark_lesson_complete, submit_feedback, add_category, EditLessonsView, AllCoursesView, LessonDeleteView,
     CourseCardDetailView, manage_account
 )
@@ -27,9 +28,9 @@ urlpatterns = [
     path('lessons/<int:lesson_id>/complete/', mark_lesson_complete, name='mark-lesson-complete'),
     path('courses/<int:course_id>/lessons/<int:lesson_id>/delete/', LessonDeleteView.as_view(), name='delete-lesson'),
     path('courses/<int:course_id>/feedback/', submit_feedback, name='submit-feedback'),
-    path('courses/<int:course_id>/students/', teacher_course_students, name='teacher-course-students'),
-    path('courses/<int:course_id>/students/<int:student_id>/', teacher_student_progress,
-         name='teacher-student-progress'),
+    path('course/<int:course_id>/students/', views.teacher_course_students, name='teacher_course_students'),
+    path('course/<int:course_id>/students/<int:student_id>/progress/', views.teacher_student_progress,
+         name='teacher_student_progress'),
     path('add-category/', add_category, name='add-category'),
     path('courses/<int:course_id>/lessons/edit/', EditLessonsView.as_view(), name='edit-lesson'),
     path('course_card_details/<int:pk>/', CourseCardDetailView.as_view(), name='course-card-detail'),

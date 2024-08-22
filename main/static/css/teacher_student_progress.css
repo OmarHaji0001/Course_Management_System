@@ -1,0 +1,57 @@
+/* General Page Styles */
+body {
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    font-family: 'Merriweather', serif;
+    color: #900;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.section-header {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border-left: 8px solid #900;
+}
+
+.section-header h4 {
+    margin: 0;
+    color: #900;
+}
+
+.card {
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-body p {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.progress-bar {
+    background-color: #900 !important;
+}
+
+.activity-item p {
+    margin: 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-left: 5px solid #900;
+    border-radius: 3px;
+    color: #333;
+}
+
+.no-content {
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 10px;
+}

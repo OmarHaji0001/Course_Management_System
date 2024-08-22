@@ -4,30 +4,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/student_cards.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/TD.css' %}">
-    <title>{{ course.name }} - Enrolled Students</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Enrolled Students - {{ course.name }}</title>
 </head>
 <body>
-<header>
-    <h1>{{ course.name }} - Enrolled Students</h1>
-    <nav>
-        <form id="logout-form" method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    </nav>
+<header class="top-bar">
+    {% include 'main/top_bar_STA.html' %}
 </header>
-<main>
-    <ul>
-        {% for enrollment in enrollments %}
-            <li>
-                {{ enrollment.user.username }}
-                <a href="{% url 'teacher-student-progress' course.id enrollment.user.id %}" class="btn btn-info btn-sm">View
-                    Progress</a>
-            </li>
-        {% endfor %}
-    </ul>
-</main>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            {% include 'main/sidebar.html' %}
+        </div>
+        <div class="col-md-9 mt-5">
+            <h2>Students Enrolled in {{ course.name }}</h2>
+
+            <div class="row">
+                {% for student_data in students %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card student-card"
+                             onclick="window.location.href='{% url 'teacher_student_progress' course.id student_data.student.id %}'">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ student_data.student.username }}</h5>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar"
+                                         style="width: {{ student_data.progress }}%;"
+                                         aria-valuenow="{{ student_data.progress }}" aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        {{ student_data.progress }}%
+                                    </div>
+                                </div>
+                                <p class="card-text mt-2 view-progress">View Student Progress</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                <nav>
+                    <ul class="pagination">
+                        {% if students.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ students.previous_page_number }}">Previous</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item disabled"><span class="page-link">{{ students.number }}</span></li>
+                        {% if students.has_next %}
+                            <li class="page-item"><a class="page-link"
+                                                     href="?page={{ students.next_page_number }}">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'main/footer_HA.html' %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
+
+    // Toggle dropdown on button click
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
 </body>
 </html>

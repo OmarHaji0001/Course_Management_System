@@ -1,0 +1,42 @@
+.student-card {
+    transition: box-shadow 0.3s ease;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.student-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.student-card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #900;
+    margin-bottom: 10px;
+}
+
+.progress {
+    height: 20px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+
+.progress-bar {
+    background-color: #900 !important;
+    font-weight: bold;
+}
+
+.view-progress {
+    text-align: center;
+    font-weight: bold;
+    color: #900;
+    margin-top: 15px;
+    font-size: 1rem;
+}
