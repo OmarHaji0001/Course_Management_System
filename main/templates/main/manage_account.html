@@ -1,0 +1,48 @@
+{% load crispy_forms_filters %}
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Manage Account</title>
+</head>
+<body>
+{% include 'main/top_bar_STA.html' %}
+
+<div class="container mt-5">
+    <h2>Manage Account</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ user_form|crispy }}
+        {{ profile_form|crispy }}
+        <button type="submit" class="btn btn-custom">Update Account</button>
+    </form>
+</div>
+
+{% include 'main/footer_HA.html' %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
+
+    // Toggle dropdown on button click
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
+</body>
+</html>

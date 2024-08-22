@@ -23,7 +23,7 @@
     <div class="row">
 
         <!-- Sidebar -->
-        <div class="col-md-2">
+        <div class="col-md-2" data-aos="fade-right">
             {% include 'main/sidebar.html' %}
         </div>
 
@@ -32,7 +32,8 @@
             <!-- My Courses Section -->
             <h2>My Courses</h2>
             {% for course in courses %}
-                <div class="course-card mb-4" onclick="window.location.href='{% url 'course-edit' course.id %}'">
+                <div class="course-card mb-4" data-aos="fade-up"
+                     onclick="window.location.href='{% url 'course-edit' course.id %}'">
                     <div class="row">
                         <div class="col-md-4">
                             <img src="{{ course.cover_image.url }}" alt="Course Photo" class="img-fluid">
@@ -48,12 +49,11 @@
 
             <!-- Activity Feed Section -->
             <h2>Activity Feed</h2>
-            <div class="activity-feed mb-4">
+            <div class="activity-feed mb-4" data-aos="fade-up">
                 {% for activity in activities %}
                     <div class="activity-item">
                         <p>"{{ activity.student_name }}" finished lesson "{{ activity.lesson_name }}" in
                             "{{ activity.course_name }}"</p>
-                        <button class="btn btn-primary">View Progress</button>
                     </div>
                 {% empty %}
                     <p>No recent activity.</p>
@@ -62,7 +62,7 @@
         </div>
 
         <!-- Right Sidebar -->
-        <div class="col-md-3">
+        <div class="col-md-3" data-aos="fade-left">
             <h3>Calendar</h3>
             <div id="calendar"></div>
         </div>
@@ -87,7 +87,7 @@
         document.getElementById('dropdownMenu').classList.toggle('show');
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         flatpickr("#calendar", {
             inline: true,  // Show the calendar inline, without needing to click an input field
             dateFormat: "Y-m-d",

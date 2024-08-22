@@ -26,7 +26,9 @@
     </div>
     <div class="search-box">
         <form method="get" action="{% url 'home' %}">
-            <input type="text" name="search" placeholder="Search courses..." required>
+            <label>
+                <input type="text" name="search" placeholder="Search courses..." required>
+            </label>
             <button type="submit">
                 <i class="fa fa-search"></i>
             </button>
@@ -44,8 +46,8 @@
         <p>Reaching out is an expression of your strength.</p>
         <div class="btn-group">
             <a href="{% url 'all_courses' %}" class="btn btn-primary">All Courses</a>
-            <a href="#" class="btn btn-primary">Online Courses</a>
-            <a href="#" class="btn btn-primary">Free Courses</a>
+            <a href="{% url 'all_courses' %}?price=free" class="btn btn-primary">Free Courses</a>
+            <a href="{% url 'all_courses' %}?modality=online" class="btn btn-primary">Online Courses</a>
         </div>
     </div>
 </section>

@@ -170,6 +170,10 @@ h2 {
 }
 
 .card {
+    height: 100%; /* Allow cards to stretch to fill available height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 20px;
@@ -185,7 +189,11 @@ h2 {
 }
 
 .card-body {
+    flex-grow: 1;
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .card-category-modality {
@@ -219,6 +227,12 @@ h2 {
     font-size: 1em;
     color: #333;
     margin-bottom: 20px;
+    height: 4.5em; /* 3 lines height */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Number of lines to display */
+    -webkit-box-orient: vertical;
 }
 
 .card-price-duration {
@@ -228,6 +242,7 @@ h2 {
     font-size: 0.9em;
     color: #333;
     font-weight: bold;
+    margin-top: auto; /* Push the content to the bottom */
 }
 
 .card-price,

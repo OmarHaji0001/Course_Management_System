@@ -11,11 +11,37 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
-from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm
+from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm, UserUpdateForm, ProfileUpdateForm
 from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag
 from django.contrib import messages
 from datetime import datetime, timedelta
 from django.utils import timezone
+
+
+@login_required
+def manage_account(request):
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your account has been updated successfully.')
+            # Redirect based on user role
+            if request.user.profile.role == 'admin':
+                return redirect('admin-dashboard')
+            elif request.user.profile.role == 'instructor':
+                return redirect('teacher-dashboard')
+            else:
+                return redirect('dashboard')
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+
+    return render(request, 'main/manage_account.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
 
 class CourseCardDetailView(DetailView):
@@ -293,11 +319,24 @@ def teacher_dashboard(request):
 
     categories = Category.objects.all()
 
+    # Fetch recent completions for the teacher's courses
+    activities = Completion.objects.filter(lesson__course__teacher=teacher).select_related('lesson', 'student',
+                                                                                           'lesson__course').order_by(
+        '-id')[:10]
+
+    # Prepare the data for the template
+    activities_data = [{
+        'student_name': activity.student.username,
+        'lesson_name': activity.lesson.name,
+        'course_name': activity.lesson.course.name
+    } for activity in activities]
+
     return render(request, 'main/teachers_dashboard.html', {
         'course_form': course_form,
         'category_form': category_form,
         'categories': categories,
-        'courses': courses  # Pass the filtered courses to the template
+        'courses': courses,  # Pass the filtered courses to the template
+        'activities': activities_data,  # Pass the activity feed data to the template
     })
 
 
@@ -327,14 +366,8 @@ class HomeView(TemplateView):
         search_query = request.GET.get('search', '')
 
         if search_query:
-            try:
-                # Redirect to course card detail page if the course is found
-                course = Course.objects.get(name__icontains=search_query)
-                return redirect('course-card-detail', pk=course.pk)
-            except Course.DoesNotExist:
-                # If no course is found, return to the home page with a message
-                messages.error(request, 'No course found with that name.')
-                return redirect('home')
+            # Redirect to the All Courses page with the search query as a parameter
+            return redirect(f'/all-courses/?search={search_query}')
 
         return super().get(request, *args, **kwargs)
 

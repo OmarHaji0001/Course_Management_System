@@ -12,12 +12,15 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
                 {% if user.profile.role == 'instructor' %}
-                    <a class="dropdown-item" href="{% url 'teacher-dashboard' %}">Dashboard</a>
-                {% elif user.profile.role == 'student' %}
-                    <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
-                {% elif user.profile.role == 'admin' %}
-                    <a class="dropdown-item" href="{% url 'admin-dashboard' %}">Dashboard</a>
-                {% endif %}
+                <a class="dropdown-item" href="{% url 'teacher-dashboard' %}">Dashboard</a>
+                <a class="dropdown-item" href="{% url 'manage-account' %}">Manage Account</a>
+            {% elif user.profile.role == 'student' %}
+                <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                <a class="dropdown-item" href="{% url 'manage-account' %}">Manage Account</a>
+            {% elif user.profile.role == 'admin' %}
+                <a class="dropdown-item" href="{% url 'admin-dashboard' %}">Dashboard</a>
+                <a class="dropdown-item" href="{% url 'manage-account' %}">Manage Account</a>
+            {% endif %}
                 <div class="dropdown-divider"></div>
                 <form id="logout-form" method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
