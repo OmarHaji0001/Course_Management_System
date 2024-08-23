@@ -1,0 +1,96 @@
+<!-- manage_quizzes.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Manage Quizzes</title>
+</head>
+<body>
+<header class="top-bar">
+    {% include 'main/top_bar_STA.html' %}
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            {% include 'main/sidebar.html' %}
+        </div>
+        <div class="col-md-9 mt-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Manage Quizzes</h2>
+                <!-- Add Quiz Button -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addQuizModal">
+                    Add a Quiz
+                </button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="addQuizModal" tabindex="-1" role="dialog" aria-labelledby="addQuizModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addQuizModalLabel">Create a New Quiz</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="POST" action="{% url 'create-quiz' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="courseSelect">Select Course</label>
+                                    <select class="form-control" id="courseSelect" name="course">
+                                        {% for course in courses %}
+                                            <option value="{{ course.id }}">{{ course.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="quizName">Quiz Name</label>
+                                    <input type="text" class="form-control" id="quizName" name="quiz_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="quizFile">Upload Excel File</label>
+                                    <input type="file" class="form-control-file" id="quizFile" name="excel_file" accept=".xlsx, .xls" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Create Quiz</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content for managing quizzes will go here -->
+        </div>
+    </div>
+</div>
+
+{% include 'main/footer_HA.html' %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
+
+    // Toggle dropdown on button click
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
+</body>
+</html>

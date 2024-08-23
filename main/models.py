@@ -59,6 +59,33 @@ class Course(models.Model):
         return self.name
 
 
+class Quiz(models.Model):
+    name = models.CharField(max_length=200)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    excel_file = models.FileField(upload_to='quizzes/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Question(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='questions')
+    text = models.TextField()
+    question_type = models.CharField(max_length=50)  # e.g., "Multiple Choice", "True/False"
+    mark = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.text
+
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
+    text = models.CharField(max_length=255)
+    is_correct = models.BooleanField(default=False)
+
+
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)

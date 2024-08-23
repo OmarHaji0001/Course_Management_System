@@ -35,4 +35,6 @@ urlpatterns = [
     path('courses/<int:course_id>/lessons/edit/', EditLessonsView.as_view(), name='edit-lesson'),
     path('course_card_details/<int:pk>/', CourseCardDetailView.as_view(), name='course-card-detail'),
     path('manage-account/', manage_account, name='manage-account'),
+    path('manage-quizzes/', views.manage_quizzes, name='manage-quizzes'),
+    path('create-quiz/', views.create_quiz, name='create-quiz'),
 ]

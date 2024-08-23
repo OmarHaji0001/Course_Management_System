@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import modelformset_factory
 
-from .models import Course, Lesson, Feedback, Category, Profile
+from .models import Course, Lesson, Feedback, Category, Profile, Quiz
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -76,3 +76,15 @@ class SignUpForm(UserCreationForm):
             user.profile.address_line2 = self.cleaned_data['address_line2']
             user.profile.save()  # Save the profile with the additional fields
         return user
+
+
+class QuizForm(forms.ModelForm):
+    class Meta:
+        model = Quiz
+        fields = ['name', 'course', 'excel_file']  # Add the excel_file field
+
+    def __init__(self, *args, **kwargs):
+        teacher = kwargs.pop('teacher', None)
+        super(QuizForm, self).__init__(*args, **kwargs)
+        if teacher:
+            self.fields['course'].queryset = Course.objects.filter(teacher=teacher)

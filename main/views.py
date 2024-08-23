@@ -1,5 +1,7 @@
 # views.py
 from audioop import reverse
+
+import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,10 +14,66 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
 from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm, UserUpdateForm, ProfileUpdateForm
-from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag
+from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag, Quiz, Question, Answer
+
 from django.contrib import messages
 from datetime import datetime, timedelta
 from django.utils import timezone
+
+
+@login_required
+def manage_quizzes(request):
+    teacher = request.user
+    courses = Course.objects.filter(teacher=teacher)  # Fetch courses for the logged-in instructor
+    return render(request, 'main/manage_quizzes.html', {'courses': courses})
+
+
+@login_required
+def create_quiz(request):
+    if request.method == 'POST':
+        course_id = request.POST.get('course')
+        quiz_name = request.POST.get('quiz_name')
+        excel_file = request.FILES.get('excel_file')
+
+        course = get_object_or_404(Course, id=course_id)
+        quiz = Quiz.objects.create(name=quiz_name, course=course, excel_file=excel_file)
+
+        # Parse the Excel file
+        if excel_file:
+            df = pd.read_excel(excel_file)
+
+            # Ensure the correct column names are used
+            if 'Question Text' not in df.columns or 'Question Type' not in df.columns:
+                messages.error(request, "The uploaded Excel file does not have the required columns.")
+                return redirect('manage-quizzes')
+
+            for _, row in df.iterrows():
+                question_text = row['Question Text']
+                question_type = row['Question Type']
+                correct_answer = row['Correct Answer']
+                options = [row.get('Option 1'), row.get('Option 2'), row.get('Option 3'), row.get('Option 4')]
+                mark = row.get('Mark', 1)  # Default mark to 1 if not provided
+
+                # Create Question
+                question = Question.objects.create(
+                    quiz=quiz,
+                    text=question_text,
+                    question_type=question_type,
+                    mark=mark
+                )
+
+                # Create Answers
+                if question_type == "True/False":
+                    for option in ["TRUE", "FALSE"]:
+                        is_correct = (option == correct_answer)
+                        Answer.objects.create(question=question, text=option, is_correct=is_correct)
+                else:  # Assume Multiple Choice
+                    for option in options:
+                        if pd.notna(option):  # Ensure there's no NaN in options
+                            is_correct = (option == correct_answer)
+                            Answer.objects.create(question=question, text=option, is_correct=is_correct)
+
+        return redirect('manage-quizzes')
 
 
 @login_required

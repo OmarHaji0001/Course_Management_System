@@ -6,6 +6,8 @@
        href="{% url 'course-create' %}">Create a Course</a>
     <a class="nav-link {% if request.resolver_match.url_name == 'manage-account' %}active{% endif %}"
        href="{% url 'manage-account' %}">Manage Account</a>
+    <a class="nav-link {% if request.resolver_match.url_name == 'manage-quizzes' %}active{% endif %}"
+       href="{% url 'manage-quizzes' %}">Manage Quizzes</a>
     <!-- Logout form -->
     <form method="POST" action="{% url 'logout' %}">
         {% csrf_token %}

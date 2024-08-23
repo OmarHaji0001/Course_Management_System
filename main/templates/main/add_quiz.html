@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Add a Quiz</title>
+</head>
+<body>
+    <header class="top-bar">
+        {% include 'main/top_bar_STA.html' %}
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                {% include 'main/sidebar.html' %}
+            </div>
+            <div class="col-md-9 mt-5">
+                <h2>Add a Quiz</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ quiz_form.as_p }}
+                    <button type="submit" class="btn btn-primary">Create Quiz</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% include 'main/footer_HA.html' %}
+</body>
+</html>
