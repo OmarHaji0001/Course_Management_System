@@ -21,6 +21,12 @@
     <p>Your Score: {{ student_quiz.score }}%</p>
     <p>You answered {{ correct_count }} out of {{ quiz.questions.count }} questions correctly.</p>
 
+    {% if student_quiz.score >= quiz.success_threshold %}
+        <p class="text-success">Congratulations! You passed the quiz.</p>
+    {% else %}
+        <p class="text-danger">Unfortunately, you did not pass the quiz.</p>
+    {% endif %}
+
     <!-- Back to Dashboard Button -->
     <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Back to Dashboard</a>
 </div>

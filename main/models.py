@@ -65,6 +65,7 @@ class Quiz(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     excel_file = models.FileField(upload_to='quizzes/', null=True, blank=True)
+    success_threshold = models.IntegerField(default=50)  # Add this field
 
     def __str__(self):
         return self.name

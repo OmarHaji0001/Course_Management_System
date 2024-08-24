@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.db.models import Count
+from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponseNotAllowed, JsonResponse, HttpResponse
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
@@ -134,9 +134,19 @@ def manage_quizzes(request):
     teacher = request.user
     # Fetch courses for the logged-in instructor
     courses = Course.objects.filter(teacher=teacher)
+
+    # Annotate courses with a flag indicating if they already have a quiz
+    courses = courses.annotate(
+        has_quiz=Exists(Quiz.objects.filter(course=OuterRef('pk')))
+    )
+
     # Fetch quizzes for the logged-in instructor's courses
     quizzes = Quiz.objects.filter(course__teacher=teacher)
-    return render(request, 'main/manage_quizzes.html', {'courses': courses, 'quizzes': quizzes})
+
+    return render(request, 'main/manage_quizzes.html', {
+        'courses': courses,
+        'quizzes': quizzes,
+    })
 
 
 @login_required
@@ -145,9 +155,18 @@ def create_quiz(request):
         course_id = request.POST.get('course')
         quiz_name = request.POST.get('quiz_name')
         excel_file = request.FILES.get('excel_file')
+        success_threshold = request.POST.get('success_threshold')  # Capture the threshold
 
         course = get_object_or_404(Course, id=course_id)
-        quiz = Quiz.objects.create(name=quiz_name, course=course, excel_file=excel_file)
+
+        # Check if the course already has a quiz
+        if Quiz.objects.filter(course=course).exists():
+            messages.error(request,
+                           f"A quiz already exists for the course {course.name}. Please delete it before creating a new one.")
+            return redirect('manage-quizzes')
+
+        quiz = Quiz.objects.create(name=quiz_name, course=course, excel_file=excel_file,
+                                   success_threshold=success_threshold)
 
         # Parse the Excel file
         if excel_file:
@@ -196,12 +215,14 @@ def edit_quiz(request, quiz_id):
             quiz.delete()
             return redirect('manage-quizzes')
 
-        # Update quiz name and course
+        # Update quiz name, course, and success threshold
         quiz_name = request.POST.get('quiz_name')
         course_id = request.POST.get('course')
+        success_threshold = request.POST.get('success_threshold')
 
         quiz.name = quiz_name
         quiz.course_id = course_id
+        quiz.success_threshold = success_threshold  # Update success threshold
 
         quiz.save()
 
