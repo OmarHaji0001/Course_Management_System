@@ -1,0 +1,77 @@
+/* quizzes_cards.css */
+
+/* General container for quizzes */
+.quizzes-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Individual quiz card */
+.quiz-card {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: white;
+    cursor: pointer; /* Make the entire card clickable */
+    transition: box-shadow 0.3s ease;
+    margin-bottom: 20px; /* Space between cards */
+}
+
+.quiz-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Hover effect */
+}
+
+.quiz-card .card-body {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.quiz-card h5.card-title {
+    margin: 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.quiz-card p.card-text {
+    margin: 5px 0;
+    color: #777;
+}
+
+/* Button styles */
+.quiz-card .btn-danger {
+    background-color: #900;
+    border-color: #900;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.quiz-card .btn-danger:hover {
+    background-color: #700;
+    border-color: #700;
+    color: white;
+}
+
+.btn-add-lesson {
+    background-color: #db8141 !important; /* Ensure this overrides Bootstrap */
+    color: white !important; /* Ensure text is white */
+    border: none !important; /* Remove any border */
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-add-lesson:hover {
+    background-color: #ca62a4 !important; /* Hover effect */
+    cursor: pointer;
+    text-decoration: none;
+}

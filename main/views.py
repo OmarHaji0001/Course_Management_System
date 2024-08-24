@@ -24,8 +24,11 @@ from django.utils import timezone
 @login_required
 def manage_quizzes(request):
     teacher = request.user
-    courses = Course.objects.filter(teacher=teacher)  # Fetch courses for the logged-in instructor
-    return render(request, 'main/manage_quizzes.html', {'courses': courses})
+    # Fetch courses for the logged-in instructor
+    courses = Course.objects.filter(teacher=teacher)
+    # Fetch quizzes for the logged-in instructor's courses
+    quizzes = Quiz.objects.filter(course__teacher=teacher)
+    return render(request, 'main/manage_quizzes.html', {'courses': courses, 'quizzes': quizzes})
 
 
 @login_required
@@ -50,7 +53,7 @@ def create_quiz(request):
             for _, row in df.iterrows():
                 question_text = row['Question Text']
                 question_type = row['Question Type']
-                correct_answer = row['Correct Answer']
+                correct_answer = str(row['Correct Answer']).strip().lower()
                 options = [row.get('Option 1'), row.get('Option 2'), row.get('Option 3'), row.get('Option 4')]
                 mark = row.get('Mark', 1)  # Default mark to 1 if not provided
 
@@ -63,17 +66,53 @@ def create_quiz(request):
                 )
 
                 # Create Answers
-                if question_type == "True/False":
-                    for option in ["TRUE", "FALSE"]:
+                if question_type.strip().lower() == "true/false":
+                    for option in ["true", "false"]:
                         is_correct = (option == correct_answer)
-                        Answer.objects.create(question=question, text=option, is_correct=is_correct)
+                        Answer.objects.create(question=question, text=option.upper(), is_correct=is_correct)
                 else:  # Assume Multiple Choice
                     for option in options:
                         if pd.notna(option):  # Ensure there's no NaN in options
-                            is_correct = (option == correct_answer)
+                            is_correct = (str(option).strip().lower() == correct_answer)
                             Answer.objects.create(question=question, text=option, is_correct=is_correct)
 
         return redirect('manage-quizzes')
+
+
+@login_required
+def edit_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+
+    if request.method == 'POST':
+        if 'delete_quiz' in request.POST:
+            quiz.delete()
+            return redirect('manage-quizzes')
+
+        # Update quiz name and course
+        quiz_name = request.POST.get('quiz_name')
+        course_id = request.POST.get('course')
+
+        quiz.name = quiz_name
+        quiz.course_id = course_id
+
+        quiz.save()
+
+        return redirect('manage-quizzes')
+
+    courses = Course.objects.filter(teacher=request.user)
+
+    return render(request, 'main/edit_quiz.html', {
+        'quiz': quiz,
+        'courses': courses,
+    })
+
+
+@login_required
+def delete_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz.delete()
+    messages.success(request, 'Quiz deleted successfully.')
+    return redirect('manage-quizzes')
 
 
 @login_required

@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Edit Quiz - {{ quiz.name }}</title>
+</head>
+<body>
+<header class="top-bar">
+    {% include 'main/top_bar_STA.html' %}
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            {% include 'main/sidebar.html' %}
+        </div>
+        <div class="col-md-9 mt-5">
+            <h2>Edit Quiz - {{ quiz.name }}</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="quizName">Quiz Name</label>
+                    <input type="text" class="form-control" id="quizName" name="quiz_name" value="{{ quiz.name }}"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="courseSelect">Select Course</label>
+                    <select class="form-control" id="courseSelect" name="course">
+                        {% for course in courses %}
+                            <option value="{{ course.id }}"
+                                    {% if quiz.course.id == course.id %}selected{% endif %}>{{ course.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-custom">Save Changes</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete({{ quiz.id }}, '{{ quiz.name }}')">
+                    Delete Quiz
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Confirming Delete -->
+<div class="modal fade" id="deleteQuizModal" tabindex="-1" role="dialog" aria-labelledby="deleteQuizModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteQuizModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the quiz: <strong id="quizName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" id="deleteQuizForm">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'main/footer_HA.html' %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
+
+    function confirmDelete(quizId, quizName) {
+        document.querySelector('#deleteQuizModal #quizName').textContent = quizName;
+        document.querySelector('#deleteQuizForm').setAttribute('action', `/delete-quiz/${quizId}/`);
+        $('#deleteQuizModal').modal('show');
+    }
+
+    // Toggle dropdown on button click
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
+        document.getElementById('dropdownMenu').classList.toggle('show');
+    });
+</script>
+</body>
+</html>

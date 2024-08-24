@@ -37,4 +37,6 @@ urlpatterns = [
     path('manage-account/', manage_account, name='manage-account'),
     path('manage-quizzes/', views.manage_quizzes, name='manage-quizzes'),
     path('create-quiz/', views.create_quiz, name='create-quiz'),
+    path('edit-quiz/<int:quiz_id>/', views.edit_quiz, name='edit-quiz'),
+    path('delete-quiz/<int:quiz_id>/', views.delete_quiz, name='delete-quiz'),
 ]
