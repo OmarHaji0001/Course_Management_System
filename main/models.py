@@ -139,3 +139,22 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.get_role_display()}'
+
+
+class StudentQuiz(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    score = models.FloatField(null=True, blank=True)
+    completed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.student.username} - {self.quiz.name} ({self.completed_at})'
+
+
+class StudentAnswer(models.Model):
+    student_quiz = models.ForeignKey(StudentQuiz, on_delete=models.CASCADE, related_name='answers')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    selected_answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.student_quiz.student.username} - {self.question.text}'

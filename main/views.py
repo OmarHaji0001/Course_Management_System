@@ -7,18 +7,126 @@ from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.http import HttpResponseNotAllowed, JsonResponse
+from django.http import HttpResponseNotAllowed, JsonResponse, HttpResponse
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
 from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm, UserUpdateForm, ProfileUpdateForm
-from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag, Quiz, Question, Answer
+from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag, Quiz, Question, Answer, \
+    StudentAnswer, StudentQuiz
 
 from django.contrib import messages
 from datetime import datetime, timedelta
 from django.utils import timezone
+
+
+@login_required
+def attempt_quiz(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    quiz = Quiz.objects.filter(course=course).last()  # Assuming there's only one quiz per course
+
+    if not quiz:
+        return HttpResponse("No quiz available for this course.")
+
+    # Store the quiz_id in session if it's not already there
+    request.session['quiz_id'] = quiz.id
+
+    # Get the current question index from the session or start with the first question
+    question_index = request.session.get(f'quiz_{quiz.id}_index', 0)
+    questions = quiz.questions.all()
+    question = questions[question_index]  # Get the current question
+
+    if request.method == 'POST':
+        selected_answer_id = request.POST.get('answer')
+        # Store the user's answer in the session
+        user_answers = request.session.get(f'quiz_{quiz.id}_answers', {})
+        user_answers[question.id] = selected_answer_id
+        request.session[f'quiz_{quiz.id}_answers'] = user_answers
+
+        # Move to the next question or finish the quiz
+        if question_index + 1 < questions.count():
+            request.session[f'quiz_{quiz.id}_index'] = question_index + 1
+            return redirect('attempt-quiz', course_id=course_id)
+        else:
+            return redirect('submit-quiz', course_id=course_id)
+
+    return render(request, 'main/attempt_quiz.html', {
+        'quiz': quiz,
+        'question': question,
+        'question_index': question_index,
+        'total_questions': questions.count(),
+    })
+
+
+@login_required
+def submit_quiz(request, course_id):
+    quiz_id = request.session.get('quiz_id')
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+
+    # Retrieve the student's answers from the session
+    student_answers = request.session.get(f'quiz_{quiz_id}_answers', {})
+
+    # Initialize the score
+    score = 0
+    total_questions = quiz.questions.count()
+
+    # Create a StudentQuiz record to track this attempt
+    student_quiz = StudentQuiz.objects.create(
+        student=request.user,
+        quiz=quiz,
+    )
+
+    # Iterate over the quiz questions and save the student's answers
+    for question in quiz.questions.all():
+        selected_answer_id = student_answers.get(str(question.id))
+        if selected_answer_id:
+            selected_answer = Answer.objects.get(id=selected_answer_id)
+
+            # Save the student's answer in the database
+            StudentAnswer.objects.create(
+                student_quiz=student_quiz,
+                question=question,
+                selected_answer=selected_answer
+            )
+
+            # Update the score if the answer is correct
+            if selected_answer.is_correct:
+                score += 1
+
+    # Update the StudentQuiz with the score
+    score_percentage = (score / total_questions) * 100
+    student_quiz.score = score_percentage
+    student_quiz.save()
+
+    # Clear the session variables after submission
+    request.session.pop(f'quiz_{quiz_id}_index', None)
+    request.session.pop(f'quiz_{quiz_id}_answers', None)
+    request.session.pop('quiz_id', None)
+
+    # Redirect to the quiz result page with the student_quiz ID
+    return redirect('quiz-result', course_id=course_id, student_quiz_id=student_quiz.id)
+
+
+@login_required
+def quiz_result(request, course_id, student_quiz_id):
+    # Retrieve the StudentQuiz object using the provided student_quiz_id
+    student_quiz = get_object_or_404(StudentQuiz, id=student_quiz_id, student=request.user)
+
+    # Get the associated Quiz from the StudentQuiz instance
+    quiz = student_quiz.quiz
+
+    # Calculate the number of correct answers
+    correct_count = student_quiz.answers.filter(selected_answer__is_correct=True).count()
+
+    context = {
+        'quiz': quiz,
+        'student_quiz': student_quiz,
+        'correct_count': correct_count,  # Pass the correct count to the template
+    }
+
+    return render(request, 'main/quiz_result.html', context)
 
 
 @login_required

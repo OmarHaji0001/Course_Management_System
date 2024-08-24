@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Profile, Course, Lesson, Enrollment, Completion, Feedback, Category, Tag, Quiz, Question, Answer
+from .models import Profile, Course, Lesson, Enrollment, Completion, Feedback, Category, Tag, Quiz, Question, Answer, \
+    StudentQuiz, StudentAnswer
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -27,3 +28,5 @@ admin.site.register(Completion)
 admin.site.register(Quiz)
 admin.site.register(Question)
 admin.site.register(Answer)
+admin.site.register(StudentQuiz)
+admin.site.register(StudentAnswer)

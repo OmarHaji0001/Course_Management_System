@@ -1,0 +1,34 @@
+/* quiz.css */
+
+/* General container for quiz */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Question styles */
+.question {
+    margin-bottom: 30px;
+}
+
+.question h4 {
+    font-size: 1.5em;
+    color: #333;
+}
+
+.form-check-label {
+    font-size: 1.2em;
+    color: #555;
+}
+
+/* Submit button */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
