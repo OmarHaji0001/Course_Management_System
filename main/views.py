@@ -1,6 +1,7 @@
 # views.py
 from audioop import reverse
 
+import time
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
@@ -23,32 +24,40 @@ from django.utils import timezone
 
 
 @login_required
-def attempt_quiz(request, course_id):
+def attempt_quiz(request, course_id, question_index=0):
     course = get_object_or_404(Course, id=course_id)
-    quiz = Quiz.objects.filter(course=course).last()  # Assuming there's only one quiz per course
+    quiz = Quiz.objects.filter(course=course).last()
 
     if not quiz:
         return HttpResponse("No quiz available for this course.")
 
-    # Store the quiz_id in session if it's not already there
-    request.session['quiz_id'] = quiz.id
-
-    # Get the current question index from the session or start with the first question
-    question_index = request.session.get(f'quiz_{quiz.id}_index', 0)
+    # Get the current question
     questions = quiz.questions.all()
-    question = questions[question_index]  # Get the current question
+    if question_index >= len(questions):
+        return redirect('submit-quiz', course_id=course_id)
+
+    question = questions[question_index]
 
     if request.method == 'POST':
         selected_answer_id = request.POST.get('answer')
-        # Store the user's answer in the session
-        user_answers = request.session.get(f'quiz_{quiz.id}_answers', {})
-        user_answers[question.id] = selected_answer_id
-        request.session[f'quiz_{quiz.id}_answers'] = user_answers
+        selected_answer = get_object_or_404(Answer, id=selected_answer_id)
+
+        # Find or create the StudentQuiz record
+        student_quiz, _ = StudentQuiz.objects.get_or_create(
+            student=request.user,
+            quiz=quiz
+        )
+
+        # Store the user's answer immediately
+        StudentAnswer.objects.create(
+            student_quiz=student_quiz,
+            question=question,
+            selected_answer=selected_answer
+        )
 
         # Move to the next question or finish the quiz
-        if question_index + 1 < questions.count():
-            request.session[f'quiz_{quiz.id}_index'] = question_index + 1
-            return redirect('attempt-quiz', course_id=course_id)
+        if question_index + 1 < len(questions):
+            return redirect('attempt-quiz', course_id=course_id, question_index=question_index + 1)
         else:
             return redirect('submit-quiz', course_id=course_id)
 
@@ -56,56 +65,45 @@ def attempt_quiz(request, course_id):
         'quiz': quiz,
         'question': question,
         'question_index': question_index,
-        'total_questions': questions.count(),
+        'total_questions': len(questions),
     })
 
 
 @login_required
 def submit_quiz(request, course_id):
-    quiz_id = request.session.get('quiz_id')
-    quiz = get_object_or_404(Quiz, id=quiz_id)
+    course = get_object_or_404(Course, id=course_id)
+    quiz = Quiz.objects.filter(course=course).last()
 
-    # Retrieve the student's answers from the session
-    student_answers = request.session.get(f'quiz_{quiz_id}_answers', {})
+    if not quiz:
+        return HttpResponse("No quiz available for this course.")
 
-    # Initialize the score
-    score = 0
-    total_questions = quiz.questions.count()
+    # Find the StudentQuiz record
+    student_quiz = StudentQuiz.objects.filter(student=request.user, quiz=quiz).first()
 
-    # Create a StudentQuiz record to track this attempt
-    student_quiz = StudentQuiz.objects.create(
-        student=request.user,
-        quiz=quiz,
-    )
+    if not student_quiz:
+        return HttpResponse("You haven't attempted this quiz.")
 
-    # Iterate over the quiz questions and save the student's answers
-    for question in quiz.questions.all():
-        selected_answer_id = student_answers.get(str(question.id))
-        if selected_answer_id:
-            selected_answer = Answer.objects.get(id=selected_answer_id)
+    # Calculate the total possible score
+    total_possible_score = sum(question.mark for question in quiz.questions.all())
 
-            # Save the student's answer in the database
-            StudentAnswer.objects.create(
-                student_quiz=student_quiz,
-                question=question,
-                selected_answer=selected_answer
-            )
+    # Calculate the student's score
+    total_score = 0
+    correct_answers = 0
+    student_answers = StudentAnswer.objects.filter(student_quiz=student_quiz)
 
-            # Update the score if the answer is correct
-            if selected_answer.is_correct:
-                score += 1
+    for student_answer in student_answers:
+        if student_answer.selected_answer.is_correct:
+            correct_answers += 1
+            total_score += student_answer.question.mark
 
-    # Update the StudentQuiz with the score
-    score_percentage = (score / total_questions) * 100
-    student_quiz.score = score_percentage
+    # Calculate the percentage score
+    percentage_score = (total_score / total_possible_score) * 100 if total_possible_score > 0 else 0
+
+    # Update the student's score and status
+    student_quiz.score = percentage_score
+    student_quiz.status = 'passed' if percentage_score >= quiz.success_threshold else 'failed'
     student_quiz.save()
 
-    # Clear the session variables after submission
-    request.session.pop(f'quiz_{quiz_id}_index', None)
-    request.session.pop(f'quiz_{quiz_id}_answers', None)
-    request.session.pop('quiz_id', None)
-
-    # Redirect to the quiz result page with the student_quiz ID
     return redirect('quiz-result', course_id=course_id, student_quiz_id=student_quiz.id)
 
 
@@ -156,6 +154,7 @@ def create_quiz(request):
         quiz_name = request.POST.get('quiz_name')
         excel_file = request.FILES.get('excel_file')
         success_threshold = request.POST.get('success_threshold')  # Capture the threshold
+        duration_minutes = request.POST.get('duration_minutes')
 
         course = get_object_or_404(Course, id=course_id)
 
@@ -165,8 +164,13 @@ def create_quiz(request):
                            f"A quiz already exists for the course {course.name}. Please delete it before creating a new one.")
             return redirect('manage-quizzes')
 
-        quiz = Quiz.objects.create(name=quiz_name, course=course, excel_file=excel_file,
-                                   success_threshold=success_threshold)
+        quiz = Quiz.objects.create(
+            name=quiz_name,
+            course=course,
+            success_threshold=success_threshold,
+            duration_minutes=duration_minutes,
+            excel_file=excel_file
+        )
 
         # Parse the Excel file
         if excel_file:
@@ -474,6 +478,14 @@ class LessonDetailView(LoginRequiredMixin, DetailView):
         context['feedback_form'] = FeedbackForm() if context['is_last_lesson'] else None
         context['completion'] = Completion.objects.filter(student=self.request.user, lesson=self.object).exists()
         context['course_id'] = course.id  # Pass the course_id to the context
+
+        # Check if the student has completed the quiz
+        if context['is_last_lesson']:
+            context['has_completed_quiz'] = StudentQuiz.objects.filter(student=self.request.user,
+                                                                       quiz__course=course).exists()
+        else:
+            context['has_completed_quiz'] = False
+
         return context
 
 

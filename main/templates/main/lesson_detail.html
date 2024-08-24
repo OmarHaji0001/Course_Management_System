@@ -35,19 +35,25 @@
             </form>
         </div>
 
-        <!-- Course Feedback and Quiz Section -->
         {% if is_last_lesson %}
-        <div class="col-md-4 course-feedback visible">
-            <h3>Course Feedback</h3>
-            <form method="POST" action="{% url 'submit-feedback' course_id %}">
-                {% csrf_token %}
-                {{ feedback_form.as_p }}
-                <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
-            </form>
-            <h3 class="mt-4">Attempt Quiz</h3>
-            <a href="{% url 'attempt-quiz' course_id %}" class="btn btn-warning">Attempt Quiz</a>
-        </div>
+            <div class="col-md-4 course-feedback visible">
+                <h3>Course Feedback</h3>
+                <form method="POST" action="{% url 'submit-feedback' course_id %}">
+                    {% csrf_token %}
+                    {{ feedback_form.as_p }}
+                    <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
+                </form>
+                <h3 class="mt-4">Quiz</h3>
+                {% if has_completed_quiz %}
+                    <button class="btn btn-success" disabled>Attempted</button>
+                {% else %}
+                    <a href="{% url 'attempt-quiz' course_id=course_id question_index=0 %}" class="btn btn-warning">Attempt
+                        Quiz</a>
+                {% endif %}
+            </div>
         {% endif %}
+
+
     </div>
 </main>
 
@@ -59,7 +65,7 @@
 
 <script>
     // Ensure the dropdown menu opens on click
-    document.getElementById('dropdownMenuButton').addEventListener('click', function() {
+    document.getElementById('dropdownMenuButton').addEventListener('click', function () {
         document.getElementById('dropdownMenu').classList.toggle('show');
     });
 </script>

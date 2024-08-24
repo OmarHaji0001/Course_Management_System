@@ -66,6 +66,7 @@ class Quiz(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     excel_file = models.FileField(upload_to='quizzes/', null=True, blank=True)
     success_threshold = models.IntegerField(default=50)  # Add this field
+    duration_minutes = models.PositiveIntegerField(default=30)  # Default to 30 minutes
 
     def __str__(self):
         return self.name
@@ -143,9 +144,15 @@ class Profile(models.Model):
 
 
 class StudentQuiz(models.Model):
+    STATUS_CHOICES = [
+        ('passed', 'Passed'),
+        ('failed', 'Failed'),
+    ]
+
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     score = models.FloatField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, null=True, blank=True)  # Add this field
     completed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
