@@ -1,7 +1,6 @@
 # views.py
 from audioop import reverse
 
-import time
 import pandas as pd
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as AuthLoginView, LogoutView as AuthLogoutView
@@ -89,9 +88,9 @@ def submit_quiz(request, course_id):
     # Calculate the student's score
     total_score = 0
     correct_answers = 0
-    student_answers = StudentAnswer.objects.filter(student_quiz=student_quiz)
+    student_answer_list = StudentAnswer.objects.filter(student_quiz=student_quiz)
 
-    for student_answer in student_answers:
+    for student_answer in student_answer_list:
         if student_answer.selected_answer.is_correct:
             correct_answers += 1
             total_score += student_answer.question.mark
@@ -108,14 +107,9 @@ def submit_quiz(request, course_id):
 
 
 @login_required
-def quiz_result(request, course_id, student_quiz_id):
-    # Retrieve the StudentQuiz object using the provided student_quiz_id
+def quiz_result(request, course_id, student_quiz_id):  # noqa: E501
     student_quiz = get_object_or_404(StudentQuiz, id=student_quiz_id, student=request.user)
-
-    # Get the associated Quiz from the StudentQuiz instance
     quiz = student_quiz.quiz
-
-    # Calculate the number of correct answers
     correct_count = student_quiz.answers.filter(selected_answer__is_correct=True).count()
 
     context = {
@@ -160,8 +154,11 @@ def create_quiz(request):
 
         # Check if the course already has a quiz
         if Quiz.objects.filter(course=course).exists():
-            messages.error(request,
-                           f"A quiz already exists for the course {course.name}. Please delete it before creating a new one.")
+            messages.error(
+                request,
+                f"A quiz already exists for the course {course.name}. "
+                "Please delete it before creating a new one."
+            )
             return redirect('manage-quizzes')
 
         quiz = Quiz.objects.create(
@@ -238,6 +235,47 @@ def edit_quiz(request, quiz_id):
         'quiz': quiz,
         'courses': courses,
     })
+
+
+@login_required
+def quiz_students_progress(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    student_quizzes = StudentQuiz.objects.filter(quiz=quiz)
+
+    paginator = Paginator(student_quizzes, 6)  # Show 6 students per page
+    page_number = request.GET.get('page')
+    student_quizzes_page = paginator.get_page(page_number)
+
+    return render(request, 'main/quiz_students_progress.html', {
+        'quiz': quiz,
+        'student_quizzes': student_quizzes_page,
+    })
+
+
+def student_answers(request, student_quiz_id):
+    student_quiz = get_object_or_404(StudentQuiz, id=student_quiz_id)
+    student_answer_list = student_quiz.answers.select_related('question', 'selected_answer').all()
+
+    # Create a list of dictionaries with the student answer, the question, and the correct answer
+    answer_data = []
+    for student_answer in student_answer_list:
+        correct_answer = student_answer.question.answers.get(is_correct=True)
+        answer_data.append({
+            'question': student_answer.question,
+            'selected_answer': student_answer.selected_answer,
+            'correct_answer': correct_answer,
+        })
+
+    paginator = Paginator(answer_data, 3)  # Show 3 answers per page
+    page_number = request.GET.get('page')
+    paginated_answer_data = paginator.get_page(page_number)
+
+    context = {
+        'student_quiz': student_quiz,
+        'paginated_answer_data': paginated_answer_data,
+    }
+
+    return render(request, 'main/student_answers.html', context)
 
 
 @login_required
@@ -542,9 +580,11 @@ def teacher_student_progress(request, course_id, student_id):
     feedbacks = Feedback.objects.filter(student=student, course=course)
 
     # Fetch the student's completion activities
-    completions = Completion.objects.filter(student=student, lesson__course=course).select_related('lesson',
-                                                                                                   'lesson__course').order_by(
-        '-id')
+    completions = Completion.objects.filter(
+        student=student, lesson__course=course
+    ).select_related(
+        'lesson', 'lesson__course'
+    ).order_by('-id')
 
     return render(request, 'main/teacher_student_progress.html', {
         'course': course,

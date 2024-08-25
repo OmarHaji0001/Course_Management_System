@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/student_answers.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pagination.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Student Answers</title>
+</head>
+
+<body>
+    <header class="top-bar">
+        {% include 'main/top_bar_STA.html' %}
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                {% include 'main/sidebar.html' %}
+            </div>
+            <div class="col-md-9 mt-5">
+                <h2>Student Answers - {{ student_quiz.quiz.name }}</h2>
+                <div class="answers-container">
+                    <div class="row">
+                        {% for data in paginated_answer_data %}
+                            <div class="col-md-12">
+                                <div class="answer-card mb-4">
+                                    <p class="question"><strong>Question:</strong> {{ data.question.text }}</p>
+                                    <p class="your-answer {% if not data.selected_answer.is_correct %}text-danger{% endif %}">
+                                        <strong>Student Answer:</strong> {{ data.selected_answer.text }}</p>
+                                    <p class="correct-answer"><strong>Correct Answer:</strong> {{ data.correct_answer.text }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- Pagination Controls -->
+                {% include 'main/pagination.html' with page_obj=paginated_answer_data %}
+            </div>
+        </div>
+    </div>
+
+    {% include 'main/footer_HA.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

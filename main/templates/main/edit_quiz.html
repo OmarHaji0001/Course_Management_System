@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/top_bar_STA.css' %}">
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer_HA.css' %}">
+    <link rel="stylesheet" href="{% static 'css/quizzes_cards.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Edit Quiz - {{ quiz.name }}</title>
@@ -22,12 +23,19 @@
             {% include 'main/sidebar.html' %}
         </div>
         <div class="col-md-9 mt-5">
-            <h2>Edit Quiz - {{ quiz.name }}</h2>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Edit Quiz - {{ quiz.name }}</h2>
+                <!-- View Student Progress Button -->
+                <a href="{% url 'quiz-students-progress' quiz.id %}" class="btn btn-info">
+                    View Student Progress
+                </a>
+            </div>
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="quizName">Quiz Name</label>
-                    <input type="text" class="form-control" id="quizName" name="quiz_name" value="{{ quiz.name }}" required>
+                    <input type="text" class="form-control" id="quizName" name="quiz_name" value="{{ quiz.name }}"
+                           required>
                 </div>
                 <div class="form-group">
                     <label for="courseSelect">Select Course</label>
@@ -41,17 +49,21 @@
                 </div>
                 <div class="form-group">
                     <label for="threshold">Success Threshold (%)</label>
-                    <input type="number" class="form-control" id="threshold" name="success_threshold" value="{{ quiz.success_threshold }}" min="0" max="100" required>
+                    <input type="number" class="form-control" id="threshold" name="success_threshold"
+                           value="{{ quiz.success_threshold }}" min="0" max="100" required>
                 </div>
                 <button type="submit" class="btn btn-custom">Save Changes</button>
-                <button type="button" class="btn btn-danger" onclick="confirmDelete({{ quiz.id }}, '{{ quiz.name }}')">Delete Quiz</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete({{ quiz.id }}, '{{ quiz.name }}')">
+                    Delete Quiz
+                </button>
             </form>
         </div>
     </div>
 </div>
 
 <!-- Modal for Confirming Delete -->
-<div class="modal fade" id="deleteQuizModal" tabindex="-1" role="dialog" aria-labelledby="deleteQuizModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteQuizModal" tabindex="-1" role="dialog" aria-labelledby="deleteQuizModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

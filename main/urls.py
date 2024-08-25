@@ -42,4 +42,7 @@ urlpatterns = [
     path('create-quiz/', views.create_quiz, name='create-quiz'),
     path('edit-quiz/<int:quiz_id>/', views.edit_quiz, name='edit-quiz'),
     path('delete-quiz/<int:quiz_id>/', views.delete_quiz, name='delete-quiz'),
+    path('quiz/<int:quiz_id>/students-progress/', views.quiz_students_progress, name='quiz-students-progress'),
+    path('student-answers/<int:student_quiz_id>/', views.student_answers, name='student-answers'),
+
 ]

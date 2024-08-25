@@ -1,0 +1,23 @@
+.pagination {
+    margin-top: 30px; /* Space above pagination */
+    margin-bottom: 0; /* No space below pagination */
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #900;
+    border-color: #900;
+}
+
+.pagination .page-item.active .page-link:hover {
+    background-color: #700;
+    border-color: #700;
+}
+
+.pagination .page-link {
+    color: black;
+}
+
+.pagination .page-link:hover {
+    color: white;
+    background-color: #700;
+}
