@@ -1,0 +1,63 @@
+body {
+    background-color: #f8f9fa; /* Light grey background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+.card {
+    border: none; /* Remove the default border */
+    border-radius: 10px; /* Rounded corners for a softer look */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    width: 100%;
+}
+
+.card-header {
+    background-color: transparent; /* Transparent header */
+    font-size: 1.5em; /* Larger title */
+    font-weight: bold; /* Bold title */
+    border-bottom: none; /* Remove the bottom border */
+    text-align: center; /* Centered text */
+    font-family: Merriweather, serif;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem; /* Ensure consistent spacing between form groups */
+}
+
+.form-control {
+    border-radius: 5px; /* Slightly rounded inputs */
+    padding: 12px; /* Increase padding for a more substantial input */
+    font-size: 1em; /* Ensure consistent font size */
+    background-color: #f7f7f7; /* Light background for inputs */
+    border: 2px solid #e0e0e0; /* Light border */
+}
+
+.form-control:focus {
+    border-color: #db8141; /* Custom orange color on focus */
+    background-color: #fff; /* White background on focus */
+    outline: none; /* Remove outline */
+    box-shadow: 0 0 5px rgba(255, 107, 0, 0.5); /* Subtle shadow on focus */
+}
+
+.btn-primary {
+    background-color: #db8141; /* Custom orange color */
+    border: none; /* Remove border */
+    padding: 12px 0; /* Increase padding for better touch targets */
+    font-size: 1.2em; /* Larger text */
+    border-radius: 5px; /* Round button edges */
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #ca62a4; /* Slightly lighter orange on hover */
+}

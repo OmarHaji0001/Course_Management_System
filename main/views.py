@@ -13,7 +13,8 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
-from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm, UserUpdateForm, ProfileUpdateForm
+from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm, UserUpdateForm, ProfileUpdateForm, \
+    CustomLoginForm
 from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag, Quiz, Question, Answer, \
     StudentAnswer, StudentQuiz
 
@@ -776,11 +777,11 @@ class SignUpView(CreateView):
 
 class LoginView(AuthLoginView):
     template_name = 'main/login.html'
+    form_class = CustomLoginForm
 
     def get_success_url(self):
         # Check if there is a 'next' parameter in the URL
         next_url = self.request.GET.get('next')
-        print(self.request.GET)
 
         if next_url:
             return next_url

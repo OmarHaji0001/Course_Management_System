@@ -1,7 +1,8 @@
 from ckeditor.widgets import CKEditorWidget
 from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import modelformset_factory
 
 from .models import Course, Lesson, Feedback, Category, Profile, Quiz
@@ -76,6 +77,26 @@ class SignUpForm(UserCreationForm):
             user.profile.address_line2 = self.cleaned_data['address_line2']
             user.profile.save()  # Save the profile with the additional fields
         return user
+
+
+class CustomLoginForm(AuthenticationForm):
+    username = forms.CharField(label="Email or Username", max_length=254)
+
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+        if username and password:
+            # Check if the username is actually an email
+            if '@' in username:
+                self.user_cache = authenticate(self.request, email=username, password=password)
+            else:
+                self.user_cache = authenticate(self.request, username=username, password=password)
+
+            if self.user_cache is None:
+                raise forms.ValidationError("Invalid login credentials.")
+
+        return self.cleaned_data
 
 
 class QuizForm(forms.ModelForm):
