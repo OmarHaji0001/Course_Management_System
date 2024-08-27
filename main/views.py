@@ -1,5 +1,6 @@
 # views.py
 from audioop import reverse
+from io import BytesIO
 
 import pandas as pd
 from django.contrib.auth.models import User
@@ -8,11 +9,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponseNotAllowed, JsonResponse, HttpResponse
+from django.template.loader import get_template
+from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
+from xhtml2pdf import pisa
+
 from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm, UserUpdateForm, ProfileUpdateForm, \
     CustomLoginForm
 from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, Tag, Quiz, Question, Answer, \
@@ -48,14 +53,12 @@ def attempt_quiz(request, course_id, question_index=0):
             quiz=quiz
         )
 
-        # Store the user's answer immediately
         StudentAnswer.objects.create(
             student_quiz=student_quiz,
             question=question,
             selected_answer=selected_answer
         )
 
-        # Move to the next question or finish the quiz
         if question_index + 1 < len(questions):
             return redirect('attempt-quiz', course_id=course_id, question_index=question_index + 1)
         else:
@@ -77,16 +80,13 @@ def submit_quiz(request, course_id):
     if not quiz:
         return HttpResponse("No quiz available for this course.")
 
-    # Find the StudentQuiz record
     student_quiz = StudentQuiz.objects.filter(student=request.user, quiz=quiz).first()
 
     if not student_quiz:
         return HttpResponse("You haven't attempted this quiz.")
 
-    # Calculate the total possible score
     total_possible_score = sum(question.mark for question in quiz.questions.all())
 
-    # Calculate the student's score
     total_score = 0
     correct_answers = 0
     student_answer_list = StudentAnswer.objects.filter(student_quiz=student_quiz)
@@ -96,10 +96,8 @@ def submit_quiz(request, course_id):
             correct_answers += 1
             total_score += student_answer.question.mark
 
-    # Calculate the percentage score
     percentage_score = (total_score / total_possible_score) * 100 if total_possible_score > 0 else 0
 
-    # Update the student's score and status
     student_quiz.score = percentage_score
     student_quiz.status = 'passed' if percentage_score >= quiz.success_threshold else 'failed'
     student_quiz.save()
@@ -116,7 +114,7 @@ def quiz_result(request, course_id, student_quiz_id):  # noqa: E501
     context = {
         'quiz': quiz,
         'student_quiz': student_quiz,
-        'correct_count': correct_count,  # Pass the correct count to the template
+        'correct_count': correct_count,
     }
 
     return render(request, 'main/quiz_result.html', context)
@@ -125,15 +123,12 @@ def quiz_result(request, course_id, student_quiz_id):  # noqa: E501
 @login_required
 def manage_quizzes(request):
     teacher = request.user
-    # Fetch courses for the logged-in instructor
     courses = Course.objects.filter(teacher=teacher)
 
-    # Annotate courses with a flag indicating if they already have a quiz
     courses = courses.annotate(
         has_quiz=Exists(Quiz.objects.filter(course=OuterRef('pk')))
     )
 
-    # Fetch quizzes for the logged-in instructor's courses
     quizzes = Quiz.objects.filter(course__teacher=teacher)
 
     return render(request, 'main/manage_quizzes.html', {
@@ -153,7 +148,6 @@ def create_quiz(request):
 
         course = get_object_or_404(Course, id=course_id)
 
-        # Check if the course already has a quiz
         if Quiz.objects.filter(course=course).exists():
             messages.error(
                 request,
@@ -170,11 +164,9 @@ def create_quiz(request):
             excel_file=excel_file
         )
 
-        # Parse the Excel file
         if excel_file:
             df = pd.read_excel(excel_file)
 
-            # Ensure the correct column names are used
             if 'Question Text' not in df.columns or 'Question Type' not in df.columns:
                 messages.error(request, "The uploaded Excel file does not have the required columns.")
                 return redirect('manage-quizzes')
@@ -184,9 +176,8 @@ def create_quiz(request):
                 question_type = row['Question Type']
                 correct_answer = str(row['Correct Answer']).strip().lower()
                 options = [row.get('Option 1'), row.get('Option 2'), row.get('Option 3'), row.get('Option 4')]
-                mark = row.get('Mark', 1)  # Default mark to 1 if not provided
+                mark = row.get('Mark', 1)
 
-                # Create Question
                 question = Question.objects.create(
                     quiz=quiz,
                     text=question_text,
@@ -194,12 +185,11 @@ def create_quiz(request):
                     mark=mark
                 )
 
-                # Create Answers
                 if question_type.strip().lower() == "true/false":
                     for option in ["true", "false"]:
                         is_correct = (option == correct_answer)
                         Answer.objects.create(question=question, text=option.upper(), is_correct=is_correct)
-                else:  # Assume Multiple Choice
+                else:  # assume multiple choice
                     for option in options:
                         if pd.notna(option):  # Ensure there's no NaN in options
                             is_correct = (str(option).strip().lower() == correct_answer)
@@ -397,10 +387,55 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
         else:
             progress = 0
 
+        # Check if the student passed the quiz
+        passed_quiz = False
+        student_quiz = StudentQuiz.objects.filter(student=user, quiz__course=course).first()
+        if student_quiz and student_quiz.status == 'passed':
+            passed_quiz = True
+
         context['course'] = course
         context['lessons'] = lessons
         context['progress'] = progress  # Add progress to the context
+        context['passed_quiz'] = passed_quiz  # Add quiz status to the context
         return context
+
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+
+class ViewPDF(View):
+    def get(self, request, *args, **kwargs):
+        # Fetch the current user (username as the student's name)
+        student_name = self.request.user.username
+
+        # Fetch course information
+        course = Course.objects.get(id=kwargs['course_id'])
+        completion_date = datetime.now().strftime('%Y-%m-%d')
+
+        # Prepare data for the PDF
+        data = {
+            'student_name': student_name,
+            'course_name': course.name,
+            'completion_date': completion_date,
+        }
+
+        # Generate PDF
+        pdf = render_to_pdf('main/certificate_template.html', data)
+
+        # Format the filename with the student's username and course name
+        filename = f"{student_name}_{course.name}_Certificate.pdf"
+
+        # Return PDF as an inline file in the browser with the specified filename
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="{filename}"'
+        return response
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')

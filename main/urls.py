@@ -6,7 +6,7 @@ from .views import (
     CourseCreateView, CourseUpdateView, LessonCreateView, LessonDetailView,
     delete_course, teacher_student_progress,
     mark_lesson_complete, submit_feedback, add_category, EditLessonsView, AllCoursesView, LessonDeleteView,
-    CourseCardDetailView, manage_account
+    CourseCardDetailView, manage_account, ViewPDF
 )
 
 urlpatterns = [
@@ -44,5 +44,5 @@ urlpatterns = [
     path('delete-quiz/<int:quiz_id>/', views.delete_quiz, name='delete-quiz'),
     path('quiz/<int:quiz_id>/students-progress/', views.quiz_students_progress, name='quiz-students-progress'),
     path('student-answers/<int:student_quiz_id>/', views.student_answers, name='student-answers'),
-
+    path('pdf/<int:course_id>/', ViewPDF.as_view(), name='view-pdf'),
 ]
