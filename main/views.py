@@ -1,6 +1,9 @@
 # views.py
+import os
+
+# os.add_dll_directory(r"C:\Program Files\GTK3-Runtime Win64\bin")
+
 from audioop import reverse
-from io import BytesIO
 
 import pandas as pd
 from django.contrib.auth.models import User
@@ -10,7 +13,6 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponseNotAllowed, JsonResponse, HttpResponse
 from django.template.loader import get_template
-from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
@@ -26,6 +28,9 @@ from .models import Course, Lesson, Enrollment, Completion, Feedback, Category, 
 from django.contrib import messages
 from datetime import datetime, timedelta
 from django.utils import timezone
+
+from django.template.loader import render_to_string
+from weasyprint import HTML
 
 
 @login_required
@@ -400,42 +405,30 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
         return context
 
 
-def render_to_pdf(template_src, context_dict={}):
-    template = get_template(template_src)
-    html = template.render(context_dict)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
-    if not pdf.err:
-        return HttpResponse(result.getvalue(), content_type='application/pdf')
-    return None
+def render_to_pdf(request, course_id):
+    student_name = f"{request.user.first_name} {request.user.last_name}"
+    course = get_object_or_404(Course, id=course_id)
+    completion_date = datetime.now().strftime('%Y-%m-%d')
 
+    context = {
+        'student_name': student_name,
+        'course_name': course.name,
+        'completion_date': completion_date,
+    }
+    print(context)
+    template_path = 'main/certificate_template.html'
+    response = HttpResponse(content_type='application/pdf')
+    filename = f"{student_name}_{course.name}_Certificate.pdf"
+    response['Content-Disposition'] = f'inline; filename="{filename}"'
 
-class ViewPDF(View):
-    def get(self, request, *args, **kwargs):
-        # Fetch the current user (username as the student's name)
-        student_name = self.request.user.username
+    template = get_template(template_path)
+    html = template.render(context)
 
-        # Fetch course information
-        course = Course.objects.get(id=kwargs['course_id'])
-        completion_date = datetime.now().strftime('%Y-%m-%d')
+    pisa_status = pisa.CreatePDF(html, dest=response)
 
-        # Prepare data for the PDF
-        data = {
-            'student_name': student_name,
-            'course_name': course.name,
-            'completion_date': completion_date,
-        }
-
-        # Generate PDF
-        pdf = render_to_pdf('main/certificate_template.html', data)
-
-        # Format the filename with the student's username and course name
-        filename = f"{student_name}_{course.name}_Certificate.pdf"
-
-        # Return PDF as an inline file in the browser with the specified filename
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'inline; filename="{filename}"'
-        return response
+    if pisa_status.err:
+        return HttpResponse('An error occurred while generating the PDF.')
+    return response
 
 
 @method_decorator(user_passes_test(lambda u: u.is_authenticated and u.profile.role == 'instructor'), name='dispatch')

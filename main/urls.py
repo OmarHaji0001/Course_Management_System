@@ -1,13 +1,6 @@
 from django.urls import path
 from . import views
-from .views import (
-    HomeView, SignUpView, LoginView, LogoutView, DashboardView,
-    admin_dashboard, teacher_dashboard, CourseDetailView, enroll_in_course,
-    CourseCreateView, CourseUpdateView, LessonCreateView, LessonDetailView,
-    delete_course, teacher_student_progress,
-    mark_lesson_complete, submit_feedback, add_category, EditLessonsView, AllCoursesView, LessonDeleteView,
-    CourseCardDetailView, manage_account, ViewPDF
-)
+from .views import *
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
@@ -44,5 +37,5 @@ urlpatterns = [
     path('delete-quiz/<int:quiz_id>/', views.delete_quiz, name='delete-quiz'),
     path('quiz/<int:quiz_id>/students-progress/', views.quiz_students_progress, name='quiz-students-progress'),
     path('student-answers/<int:student_quiz_id>/', views.student_answers, name='student-answers'),
-    path('pdf/<int:course_id>/', ViewPDF.as_view(), name='view-pdf'),
+    path('pdf/<int:course_id>/', render_to_pdf, name='view-pdf'),
 ]

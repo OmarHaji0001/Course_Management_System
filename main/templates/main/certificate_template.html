@@ -1,78 +1,23 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Certificate of Completion</title>
     <style>
         body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
-            text-align: center;
-            color: #333;
         }
-
-        .certificate-container {
-            width: 80%;
-            margin: 50px auto;
-            padding: 40px;
-            border: 10px solid #900;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .certificate-title {
-            font-size: 32px;
-            font-weight: bold;
-            color: #900;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .certificate-content {
-            margin-top: 40px;
-            font-size: 20px;
-            line-height: 1.6;
-        }
-
-        .certificate-content strong {
-            font-size: 24px;
-            color: #000;
-        }
-
-        .certificate-footer {
-            margin-top: 50px;
-            font-size: 16px;
-            color: #777;
-        }
-
-
-
-        .certificate-signature {
-            margin-top: 40px;
-            font-size: 18px;
-            font-weight: bold;
+        .fuck{
+            transform: rotate(90deg);
         }
     </style>
 </head>
 <body>
-<div class="certificate-container">
-    <div class="certificate-title">Certificate of Completion</div>
-    <div class="certificate-content">
-        This is to certify that<br><br>
-        <strong>{{ student_name }}</strong><br><br>
-        has successfully completed the course<br><br>
-        <strong>{{ course_name }}</strong><br><br>
-        on <strong>{{ completion_date }}</strong>.
+<div style="position: relative">
+    <div style="position: absolute">
+        <p class="fuck">{{ student_name }}</p>
+        <p>{{ course_name }}</p>
     </div>
-    <div class="certificate-footer">
-        Issued by LK Wellness <br>
-        Brooklyn, NY <br>
-    </div>
-    <div class="certificate-signature">
-        [Signature]
-    </div>
+    <img height="500px" src="{% static 'images/frame.jpg' %}">
 </div>
 </body>
 </html>
