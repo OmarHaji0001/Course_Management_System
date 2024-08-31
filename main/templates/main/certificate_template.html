@@ -2,22 +2,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Certificate of Completion</title>
+    <meta charset="UTF-8">
+    <title>PDF Document</title>
     <style>
-        body {
+        @page {
+            size: A4;
+            margin: 20mm;
         }
-        .fuck{
-            transform: rotate(90deg);
+
+        body {
+            font-family: Arial, sans-serif;
+            background: url('{{ frame_image_path }}') no-repeat center center;
+            background-size: cover; /* Adjust based on your needs */
+        }
+
+        .content {
+            margin: 20px;
+            position: relative;
+            z-index: 1;
+            color: #000;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
-<div style="position: relative">
-    <div style="position: absolute">
-        <p class="fuck">{{ student_name }}</p>
-        <p>{{ course_name }}</p>
+    <div class="header">
+        <h1>My PDF Document</h1>
     </div>
-    <img height="500px" src="{% static 'images/frame.jpg' %}">
-</div>
+    <div class="content">
+        <p>Your content goes here...</p>
+    </div>
 </body>
 </html>

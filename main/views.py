@@ -31,6 +31,7 @@ from django.utils import timezone
 
 from django.template.loader import render_to_string
 from weasyprint import HTML
+from django.templatetags.static import static
 
 
 @login_required
@@ -409,25 +410,24 @@ def render_to_pdf(request, course_id):
     student_name = f"{request.user.first_name} {request.user.last_name}"
     course = get_object_or_404(Course, id=course_id)
     completion_date = datetime.now().strftime('%Y-%m-%d')
-
+    frame_image_url = request.build_absolute_uri(static('images/frame.jpg'))
     context = {
         'student_name': student_name,
         'course_name': course.name,
         'completion_date': completion_date,
+        'frame_image_path': frame_image_url,
     }
     print(context)
-    template_path = 'main/certificate_template.html'
     response = HttpResponse(content_type='application/pdf')
     filename = f"{student_name}_{course.name}_Certificate.pdf"
     response['Content-Disposition'] = f'inline; filename="{filename}"'
+    html_string = render_to_string('main/certificate_template.html', context)
+    html = HTML(string=html_string)
+    pdf = html.write_pdf()
 
-    template = get_template(template_path)
-    html = template.render(context)
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="document.pdf"'
 
-    pisa_status = pisa.CreatePDF(html, dest=response)
-
-    if pisa_status.err:
-        return HttpResponse('An error occurred while generating the PDF.')
     return response
 
 
