@@ -1,6 +1,5 @@
 # views.py
-import os
-
+# import os
 # os.add_dll_directory(r"C:\Program Files\GTK3-Runtime Win64\bin")
 
 from audioop import reverse
@@ -12,13 +11,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponseNotAllowed, JsonResponse, HttpResponse
-from django.template.loader import get_template
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
-from xhtml2pdf import pisa
 
 from .forms import SignUpForm, CourseForm, LessonForm, FeedbackForm, CategoryForm, UserUpdateForm, ProfileUpdateForm, \
     CustomLoginForm
@@ -410,7 +407,7 @@ def render_to_pdf(request, course_id):
     student_name = f"{request.user.first_name} {request.user.last_name}"
     course = get_object_or_404(Course, id=course_id)
     completion_date = datetime.now().strftime('%Y-%m-%d')
-    frame_image_url = request.build_absolute_uri(static('images/frame.jpg'))
+    frame_image_url = request.build_absolute_uri(static('images/frame.png'))
     context = {
         'student_name': student_name,
         'course_name': course.name,

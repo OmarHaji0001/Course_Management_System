@@ -3,40 +3,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PDF Document</title>
+    <title>Certificate of Completion</title>
     <style>
         @page {
             size: A4;
-            margin: 20mm;
+            margin: 0;
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Georgia', serif;
             background: url('{{ frame_image_path }}') no-repeat center center;
-            background-size: cover; /* Adjust based on your needs */
+            background-size: cover;
+            margin: 0;
+            height: 100vh; /* Full height */
+            width: 100vw; /* Full width */
         }
 
-        .content {
-            margin: 20px;
-            position: relative;
-            z-index: 1;
-            color: #000;
+        p {
+            margin: 0; /* Reset default margin */
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
+        .student-name {
+            font-size: 20px;
+            margin-top: 420px; /* Adjust this value to position the text vertically */
+            margin-left: 380px; /* Adjust this value to position the text horizontally */
+        }
+
+        .course-name {
+            font-size: 20px;
+            margin-top: 120px; /* Adjust this value to position the text vertically */
+            margin-left: 360px; /* Adjust this value to position the text horizontally */
+        }
+
+        .completion-date {
+            font-size: 16px;
+            margin-top: 110px; /* Adjust this value to position the text vertically */
+            margin-left: 400px; /* Adjust this value to position the text horizontally */
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>My PDF Document</h1>
-    </div>
-    <div class="content">
-        <p>Your content goes here...</p>
-    </div>
+    <p class="student-name">{{ student_name }}</p>
+    <p class="course-name">{{ course_name }}</p>
+    <p class="completion-date">{{ completion_date }}</p>
 </body>
 </html>
