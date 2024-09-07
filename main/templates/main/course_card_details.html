@@ -48,7 +48,7 @@
                     <a href="{% url 'enroll-in-course' course.id %}" class="btn btn-primary Enroll">Enroll</a>
                 {% endif %}
             {% else %}
-                <a href="{% url 'login' %}?next={% url 'course-card-detail' course.id %}" class="btn btn-primary">Login
+                <a href="{% url 'login' %}?next={% url 'course-card-detail' course.id %}" class="btn btn-primary Enroll">Login
                     to Enroll</a>
             {% endif %}
         </div>
