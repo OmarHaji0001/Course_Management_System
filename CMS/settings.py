@@ -1,5 +1,12 @@
 from pathlib import Path
 import os
+import cloudinary
+import cloudinary_storage
+import cloudinary.uploader
+import cloudinary.api
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,6 +21,7 @@ SECRET_KEY = 'django-insecure-*47$3gztb$034+_5iffb26$&6f!682z@gpq7w93+6=pm4r)_6+
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '.vercel.app',
     '*'
 ]
 
@@ -33,6 +41,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'main',
     'ckeditor',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -73,11 +83,11 @@ WSGI_APPLICATION = 'CMS.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "cms",
-        "USER": "postgres",
-        "PASSWORD": "0010",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": "postgres",
+        "USER": "postgres.cblebtemqsvovizkqgaq",
+        "PASSWORD": "preezz502@@",
+        "HOST": "aws-0-eu-central-1.pooler.supabase.com",
+        "PORT": "6543",
     }
 }
 
@@ -122,3 +132,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = '/'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dajmwgdo5',
+    'API_KEY': '581999466365737',
+    'API_SECRET': 'L9tWCBD9h0t1rOSkKrE_7Am6bSw',
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
